@@ -9,7 +9,7 @@ __pycache__/
 dist/
 build/
 
-# Do NOT ignore uv.lock — commit it for reproducibility
+# Do NOT ignore uv.lock - commit it for reproducibility
 # uv.lock
 
 # IDE

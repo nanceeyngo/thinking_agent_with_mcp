@@ -43,7 +43,7 @@ A modular AI agent system where a **FastMCP Server** exposes a Reflection tool (
 ## Project Structure
 
 ```
-thinking-agent-stage2/
+thinking_agent_with_mcp/
 ├── pyproject.toml                        ← uv workspace root
 ├── .env.example                          ← copy to .env
 ├── agent_system.log                      ← generated at runtime
@@ -66,7 +66,7 @@ thinking-agent-stage2/
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/YOUR_USERNAME/thinking-agent-stage2.git
+git clone https://github.com/nanceeyngo/thinking_agent_with_mcp.git
 cd thinking-agent-stage2
 ```
 
