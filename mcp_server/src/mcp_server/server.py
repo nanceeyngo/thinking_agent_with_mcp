@@ -22,6 +22,7 @@ from fastmcp import Context, FastMCP
 from pydantic import BaseModel, Field
 from starlette.requests import Request
 from starlette.responses import PlainTextResponse
+from mcp.types import SamplingMessage, TextContent
 
 load_dotenv()
 
@@ -114,6 +115,25 @@ DOMAIN_KNOWLEDGE: dict[str, dict[str, list[str]]] = {
 }
 
 
+# 4. CriticReport model for structured output from the Critic LLM in the reflection loop
+class CriticReport(BaseModel):
+    """
+    Structured output returned by the Critic LLM.
+    """
+
+    problems: list[str] = Field(default_factory=list)
+
+    is_sufficient: bool = False
+
+    reason: str = ""
+
+    evidence: list[str] = Field(default_factory=list)
+
+
+# 5. Internal helpers for CRAG
+
+
+# helper to build a hierarchical index from the nested DOMAIN_KNOWLEDGE structure.
 def _build_hierarchical_index() -> list[dict[str, Any]]:
     """
     Flatten the nested DOMAIN_KNOWLEDGE into a list of chunks,
@@ -171,9 +191,9 @@ logger.info(
     len(DOMAIN_KNOWLEDGE),
 )
 
-# 4. Internal helpers for CRAG
 
-
+# helper for CRAG resource - multi-query expansion to generate
+# semantic variants of the raw query
 def _expand_query(raw_query: str) -> list[str]:
     """
     Multi-query expansion: generate semantic variants of the raw query.
@@ -212,32 +232,253 @@ def _expand_query(raw_query: str) -> list[str]:
     return unique
 
 
-def _keyword_search(query: str, top_k: int = 6) -> list[dict[str, Any]]:
+# helper for CRAG resource - performs hierarchical
+# retrieval based on the raw query
+def _hierarchical_retrieve(raw_query: str, ctx: Context) -> list[dict[str, Any]]:
     """
-    Simple keyword-overlap retrieval across the hierarchical index.
-    Returns top_k chunks ranked by overlap score.
+    True hierarchical retrieval (3-level indexing):
+
+    Level 1: Search across all domains to identify top_k relevant domains
+    Level 2: For each relevant domain, search sections to identify top_k
+    Level 3: For each relevant section, search sentences to identify top_k
+
+    This avoids searching the entire store on every retrieval by
+    progressively narrowing the search space at each level.
+
+    Returns: List of top sentence-level chunks with full hierarchical context.
     """
-    q_words = set(query.lower().split())
-    scored: list[tuple[float, dict[str, Any]]] = []
+    q_words = set(raw_query.lower().split())
+    level_weights = {"sentence": 1.5, "section": 1.0, "domain": 0.5}
+    top_k = 3
+
+    # LEVEL 1: Domain-level search
+    logger.debug("Hierarchical retrieval Level 1: Searching domains...")
+    domain_scores: dict[str, float] = {}
 
     for chunk in HIERARCHICAL_INDEX:
+        if chunk["level"] != "domain":
+            continue
         chunk_words = set(chunk["text"].lower().split())
         overlap = len(q_words & chunk_words)
         if overlap > 0:
-            # Weight granular sentences higher than summaries
-            level_weight = {"sentence": 1.5, "section": 1.0, "domain": 0.5}.get(
-                chunk["level"], 1.0
-            )
-            scored.append((overlap * level_weight, chunk))
+            domain_name = chunk["domain"]
+            score = overlap * level_weights["domain"]
+            domain_scores[domain_name] = domain_scores.get(domain_name, 0) + score
 
-    scored.sort(key=lambda x: x[0], reverse=True)
-    return [chunk for _, chunk in scored[:top_k]]
+    # Select top_k relevant domains
+    top_domains = sorted(domain_scores.items(), key=lambda x: x[1], reverse=True)[
+        :top_k
+    ]
+    selected_domain_names = [d[0] for d in top_domains]
+    if not selected_domain_names:
+        selected_domain_names = [
+            chunk["domain"]
+            for chunk in HIERARCHICAL_INDEX
+            if chunk["level"] == "domain"
+        ]
+        logger.debug(
+            "Level 1 yielded no strong domain matches; using all domains: %s",
+            selected_domain_names,
+        )
+    else:
+        logger.debug(
+            "Level 1 complete — found %d relevant domains: %s",
+            len(selected_domain_names),
+            selected_domain_names,
+        )
+
+    # LEVEL 2: Section-level search within top domains
+    logger.debug("Hierarchical retrieval Level 2: Searching sections in top domains...")
+    section_scores: dict[tuple[str, str], float] = {}
+
+    for chunk in HIERARCHICAL_INDEX:
+        if chunk["level"] != "section":
+            continue
+        if chunk["domain"] not in selected_domain_names:
+            continue
+        chunk_words = set(chunk["text"].lower().split())
+        overlap = len(q_words & chunk_words)
+        if overlap > 0:
+            key = (chunk["domain"], chunk["section"])
+            score = overlap * level_weights["section"]
+            section_scores[key] = section_scores.get(key, 0) + score
+
+    # Select top_k relevant sections per domain
+    top_sections = sorted(section_scores.items(), key=lambda x: x[1], reverse=True)[
+        : top_k * max(1, len(selected_domain_names))
+    ]
+    selected_sections = {key for key, _ in top_sections}
+    if not selected_sections:
+        selected_sections = {
+            (chunk["domain"], chunk["section"])
+            for chunk in HIERARCHICAL_INDEX
+            if chunk["level"] == "section" and chunk["domain"] in selected_domain_names
+        }
+    logger.debug(
+        "Level 2 complete — found %d relevant sections",
+        len(selected_sections),
+    )
+
+    # LEVEL 3: Sentence-level search within top sections
+    logger.debug(
+        "Hierarchical retrieval Level 3: " "Searching sentences in top sections..."
+    )
+    final_chunks: list[dict[str, Any]] = []
+
+    for chunk in HIERARCHICAL_INDEX:
+        if chunk["level"] != "sentence":
+            continue
+        key = (chunk["domain"], chunk["section"])
+        if key not in selected_sections:
+            continue
+        chunk_words = set(chunk["text"].lower().split())
+        overlap = len(q_words & chunk_words)
+        if overlap > 0:
+            score = overlap * level_weights["sentence"]
+            final_chunks.append((score, chunk))
+
+    # Sort by score and take top_k
+    final_chunks.sort(key=lambda x: x[0], reverse=True)
+    result = [chunk for _, chunk in final_chunks[: top_k * len(selected_sections)]]
+    logger.debug(
+        "Level 3 complete — retrieved %d relevant sentences",
+        len(result),
+    )
+
+    return result
 
 
-def _multi_query_retrieve(raw_query: str) -> list[dict[str, Any]]:
+# helper for CRAG resource - Tree-of-Thought evaluation using LLM via MCP Sampling
+async def _tot_evaluate_with_llm(
+    query: str,
+    chunks: list[dict[str, Any]],
+    ctx: Context,
+) -> tuple[list[dict[str, Any]], bool]:
     """
-    Run keyword retrieval for each query variant and merge results,
-    deduplicating by chunk ID.
+    Tree-of-Thought evaluation using LLM via MCP Sampling.
+
+    Instead of rule-based scoring, the LLM acts as three personas:
+    - Persona A (Analytical): Evaluates technical accuracy and depth
+    - Persona B (Relevance): Evaluates how well chunks answer the query
+    - Persona C (Coverage): Evaluates whether chunks provide complete information
+
+    The LLM produces structured JSON indicating which chunks to keep and
+    whether fallback is needed.
+
+    Returns: (selected_chunks, fallback_needed)
+    """
+    if not chunks:
+        return [], True
+
+    logger.debug("ToT evaluation: Requesting LLM evaluation via sampling...")
+
+    # Format chunks for evaluation
+    chunk_list = "\n".join(
+        [
+            f"{i}. [{chunk['level'].upper()} | {chunk['domain']}"
+            + (f" / {chunk['section']}" if chunk["section"] else "")
+            + f"]: {chunk['text'][:100]}..."
+            for i, chunk in enumerate(chunks)
+        ]
+    )
+
+    tot_messages = [
+        SamplingMessage(
+            role="assistant",
+            content=TextContent(
+                type="text",
+                text=(
+                    "You are evaluating retrieved chunks as three personas: "
+                    "Analyst (depth/accuracy), Relevance Expert (query match), "
+                    "and Coverage Reviewer (completeness). Produce a JSON report."
+                ),
+            ),
+        ),
+        SamplingMessage(
+            role="user",
+            content=TextContent(
+                type="text",
+                text=(
+                    "Evaluate these chunks using three perspectives:\n\n"
+                    f"QUERY: {query}\n\n"
+                    f"CHUNKS:\n{chunk_list}\n\n"
+                    "For each chunk, assign scores 0-1 for each persona. "
+                    "Output JSON:\n"
+                    "{\n"
+                    '  "evaluations": [{"id": 0, "analytical_score": 0.8, '
+                    '"relevance_score": 0.9, "coverage_score": 0.7}],\n'
+                    '  "fallback_needed": false,\n'
+                    '  "reasoning": "..."\n'
+                    "}"
+                ),
+            ),
+        ),
+    ]
+
+    try:
+        tot_result = await ctx.sample(
+            messages=tot_messages,
+            max_tokens=1024,
+            temperature=0.0,
+        )
+
+        if hasattr(tot_result, "text"):
+            tot_text = tot_result.text
+        else:
+            tot_text = str(tot_result)
+
+        # Parse LLM response
+        import json as json_lib
+
+        try:
+            tot_data = json_lib.loads(tot_text)
+            evaluations = tot_data.get("evaluations", [])
+            fallback_needed = tot_data.get("fallback_needed", True)
+
+            # Keep chunks with average score >= 0.5
+            kept_chunk_ids = {
+                e["id"]
+                for e in evaluations
+                if (
+                    e.get("analytical_score", 0)
+                    + e.get("relevance_score", 0)
+                    + e.get("coverage_score", 0)
+                )
+                / 3
+                >= 0.5
+            }
+
+            selected = [c for i, c in enumerate(chunks) if i in kept_chunk_ids]
+
+            logger.info(
+                "ToT evaluation complete — kept %d/%d chunks | fallback=%s",
+                len(selected),
+                len(chunks),
+                fallback_needed,
+            )
+            await ctx.info(
+                f"ToT evaluation complete — kept {len(selected)}/{len(chunks)} chunks"
+            )
+
+            return selected, fallback_needed
+        except (json_lib.JSONDecodeError, KeyError):
+            # Fallback to original chunks if parsing fails
+            logger.warning("ToT LLM response not valid JSON, using all chunks")
+            return chunks, True
+
+    except Exception as exc:
+        logger.error("ToT LLM evaluation failed: %s", exc)
+        await ctx.error(f"ToT evaluation failed: {exc}")
+        return chunks, True
+
+
+# helper for CRAG resource - multi-query expansion with
+# hierarchical retrieval for each variant
+def _multi_query_retrieve_hierarchical(
+    raw_query: str, ctx: Context
+) -> list[dict[str, Any]]:
+    """
+    Multi-query expansion with hierarchical retrieval for each variant.
     """
     variants = _expand_query(raw_query)
     logger.debug(
@@ -248,187 +489,21 @@ def _multi_query_retrieve(raw_query: str) -> list[dict[str, Any]]:
     merged: list[dict[str, Any]] = []
 
     for variant in variants:
-        results = _keyword_search(variant, top_k=4)
+        results = _hierarchical_retrieve(variant, ctx)
         for chunk in results:
             if chunk["id"] not in seen_ids:
                 seen_ids.add(chunk["id"])
                 merged.append(chunk)
 
-    logger.debug("Multi-query retrieval merged %d unique chunks.", len(merged))
+    logger.debug(
+        "Multi-query hierarchical retrieval merged %d unique chunks.",
+        len(merged),
+    )
     return merged
 
 
-# 5. Tree-of-Thought evaluation (server-side, LLM-free)
-#    Three scoring personas evaluate each chunk; the judge selects the best set.
-#    Because the server has no LLM, ToT is implemented as rule-based scoring.
-
-
-class ToTEvaluation(BaseModel):
-    chunk_id: str
-    relevance_score: float = Field(ge=0.0, le=1.0)
-    persona_scores: dict[str, float]
-    verdict: str  # "keep" | "drop" | "fallback_needed"
-
-
-def _tot_evaluate_chunks(
-    query: str,
-    chunks: list[dict[str, Any]],
-) -> tuple[list[dict[str, Any]], bool]:
-    """
-    Three-persona ToT evaluation for retrieved chunks.
-
-    Persona A - Analytical: rewards domain/section match and sentence-level detail.
-    Persona B - Relevance:  rewards keyword overlap with the raw query.
-    Persona C - Coverage:   penalises if only summary-level chunks remain.
-
-    Returns (selected_chunks, fallback_needed).
-    fallback_needed = True when average score < 0.35 (internal docs insufficient).
-    """
-    q_words = set(query.lower().split())
-    evaluations: list[ToTEvaluation] = []
-
-    for chunk in chunks:
-        chunk_words = set(chunk["text"].lower().split())
-        overlap_ratio = len(q_words & chunk_words) / max(len(q_words), 1)
-
-        # Persona A — Analytical
-        score_a = 0.5 if chunk["level"] == "sentence" else 0.25
-        score_a += overlap_ratio * 0.5
-
-        # Persona B — Relevance
-        score_b = overlap_ratio
-
-        # Persona C — Coverage (favours sentence-level chunks)
-        score_c = {"sentence": 0.8, "section": 0.5, "domain": 0.2}.get(
-            chunk["level"], 0.3
-        )
-
-        avg_score = (score_a + score_b + score_c) / 3
-
-        verdict = "keep" if avg_score >= 0.35 else "drop"
-
-        eval_result = ToTEvaluation(
-            chunk_id=chunk["id"],
-            relevance_score=round(avg_score, 3),
-            persona_scores={
-                "analytical": round(score_a, 3),
-                "relevance": round(score_b, 3),
-                "coverage": round(score_c, 3),
-            },
-            verdict=verdict,
-        )
-        evaluations.append(eval_result)
-
-        logger.debug(
-            "ToT eval — chunk='%s' | analytical=%.2f | relevance=%.2f | "
-            "coverage=%.2f | avg=%.2f | verdict=%s",
-            chunk["id"],
-            score_a,
-            score_b,
-            score_c,
-            avg_score,
-            verdict,
-        )
-
-    # Select kept chunks
-    kept_ids = {e.chunk_id for e in evaluations if e.verdict == "keep"}
-    selected = [c for c in chunks if c["id"] in kept_ids]
-
-    # Fallback if fewer than 2 chunks survive or average score is very low
-    avg_overall = (
-        sum(e.relevance_score for e in evaluations) / len(evaluations)
-        if evaluations
-        else 0.0
-    )
-    fallback_needed = len(selected) < 2 or avg_overall < 0.35
-
-    logger.info(
-        "ToT evaluation complete — kept %d/%d chunks | avg_score=%.3f | "
-        "fallback_needed=%s",
-        len(selected),
-        len(chunks),
-        avg_overall,
-        fallback_needed,
-    )
-
-    return selected, fallback_needed
-
-
-# 6. @resource — Hierarchical CRAG knowledge base
-
-
-@mcp.resource("knowledge://domain/docs/{query}")
-async def domain_knowledge_resource(query: str, ctx: Context) -> str:
-    """
-    Hierarchical CRAG knowledge resource.
-
-    Implements the full CRAG pipeline:
-      1. Multi-query expansion
-      2. Hierarchical retrieval across domain/section/sentence levels
-      3. Tree-of-Thought 3-persona evaluation
-      4. Tavily web fallback when internal docs are insufficient
-
-    Args:
-        query: The user's question or research topic.
-        ctx:   FastMCP context for logging and MCP protocol operations.
-
-    Returns:
-        Formatted context string with retrieved and evaluated knowledge.
-    """
-    logger.info("domain_knowledge_resource called | query='%s'", query)
-    await ctx.info(f"CRAG resource invoked for query: '{query}'")
-
-    # Step 1: Multi-query expansion
-    await ctx.debug("Step 1: Expanding query into semantic variants...")
-
-    retrieved = _multi_query_retrieve(query)
-    await ctx.info(f"Step 1 complete — retrieved {len(retrieved)} unique chunks.")
-
-    # Step 2: ToT evaluation
-    await ctx.debug("Step 2: Running Tree-of-Thought evaluation (3 personas)...")
-    selected_chunks, fallback_needed = _tot_evaluate_chunks(query, retrieved)
-    await ctx.info(
-        f"Step 2 complete — {len(selected_chunks)} chunks passed ToT | "
-        f"fallback_needed={fallback_needed}"
-    )
-
-    results: list[str] = []
-
-    # Step 3: Format internal results
-    if selected_chunks:
-        await ctx.debug("Step 3: Formatting selected internal chunks...")
-        for chunk in selected_chunks:
-            path = chunk["domain"]
-            if chunk["section"]:
-                path += f" / {chunk['section']}"
-            results.append(f"[{chunk['level'].upper()} | {path}]\n{chunk['text']}")
-
-    # Step 4: Tavily fallback
-    if fallback_needed:
-        await ctx.info(
-            "Step 4: Internal docs insufficient — triggering Tavily falllback..."
-        )
-        tavily_results = await _tavily_fallback(query, ctx)
-        if tavily_results:
-            results.append("\n--- Web Fallback (Tavily) ---")
-            results.extend(tavily_results)
-            await ctx.info(
-                f"Step 4 complete — added {len(tavily_results)} Tavily results."
-            )
-        else:
-            await ctx.warning("Tavily fallback returned no results.")
-
-    if not results:
-        return (
-            "No relevant context found in the internal knowledge base or "
-            "web fallback for this query."
-        )
-
-    formatted = "\n\n".join(results)
-    await ctx.info("CRAG pipeline complete — returning context to agent.")
-    return formatted
-
-
+# helper for CRAG resource - Tavily web search
+# fallback when internal docs are insufficient
 async def _tavily_fallback(query: str, ctx: Context) -> list[str]:
     """Run a Tavily web search as fallback when internal docs are insufficient."""
     tavily_api_key = os.getenv("TAVILY_API_KEY", "")
@@ -461,12 +536,276 @@ async def _tavily_fallback(query: str, ctx: Context) -> list[str]:
         return []
 
 
-# 7. @tool — Reflection via MCP Sampling
-#    CRITICAL: server holds NO LLM. Both critic and corrector calls are
-#    delegated to the client's LLM via ctx.request_sampling().
-#    Content blocks MUST be arrays of JSON objects, not raw strings.
+# helper for critic/corrector tool - runs the Critic LLM via
+# MCP Sampling to evaluate the draft answer
+async def _run_critic(
+    question: str,
+    draft_answer: str,
+    search_results: str,
+    ctx: Context,
+) -> CriticReport:
+    """
+    Run the Critic LLM via MCP Sampling to evaluate the draft answer.
+
+    Args:
+        question:       The user's original question.
+        draft_answer:         The agent's current draft answer.
+        search_results: Raw retrieved context (from CRAG resource).
+        ctx:            FastMCP context for logging and sampling.
+
+    Returns:
+        CriticReport with identified problems, sufficiency flag, and evidence.
+    """
+    logger.info("Running critic evaluation via MCP Sampling...")
+    await ctx.info("Running critic evaluation via MCP Sampling...")
+    critic_messages = [
+        SamplingMessage(
+            role="assistant",
+            content=TextContent(
+                type="text",
+                text=(
+                    "You are a rigorous fact-checking critic.\n"
+                    "Evaluate the draft answer ONLY against the supplied "
+                    "search results.\n"
+                    "Return valid JSON only."
+                ),
+            ),
+        ),
+        SamplingMessage(
+            role="user",
+            content=TextContent(
+                type="text",
+                text=(f"""
+                    QUESTION:
+                    {question}
+
+                    SEARCH RESULTS:
+                    {search_results}
+
+                    DRAFT ANSWER:
+                    {draft_answer}
+
+                    Return ONLY valid JSON:
+
+                    {{
+                    "problems": [
+                        "issue1",
+                        "issue2"
+                    ],
+                    "is_sufficient": true,
+                    "reason": "brief explanation",
+                    "evidence": [
+                        "specific supporting citation"
+                    ]
+                    }}
+
+                    Rules:
+
+                    - Hallucinations = unsupported claims
+                    - Contradictions = claims conflicting with results
+                    - Omissions = important missing information
+                    - If no issues exist:
+                        problems=[]
+                        is_sufficient=true
+                    """),
+            ),
+        ),
+    ]
+
+    result = await ctx.sample(
+        messages=critic_messages,
+        max_tokens=1000,
+        temperature=0.0,
+    )
+
+    if hasattr(result, "text"):
+        text = result.text
+    else:
+        text = str(result)
+
+    logger.info("Critic response:\n%s", text)
+    try:
+        data = json.loads(text)
+
+        return CriticReport(
+            problems=data.get("problems", []),
+            is_sufficient=data.get("is_sufficient", False),
+            reason=data.get("reason", ""),
+            evidence=data.get("evidence", []),
+        )
+    except Exception:
+        logger.exception("Critic returned invalid JSON")
+        return CriticReport(
+            problems=[text],
+            is_sufficient=False,
+            reason="Critic returned invalid JSON",
+            evidence=[],
+        )
 
 
+# helper for critic/corrector tool - runs the Corrector LLM via MCP Sampling
+# to rewrite the draft answer based on critic feedback and search results
+async def _run_corrector(
+    question: str,
+    draft_answer: str,
+    search_results: str,
+    critique: CriticReport,
+    ctx: Context,
+) -> str:
+    """
+    Run the Corrector LLM via MCP Sampling to rewrite the draft answer.
+
+    Args:
+        question:       The user's original question.
+        draft_answer:   The agent's current draft answer.
+        search_results: Raw retrieved context (from CRAG resource).
+        critique:       The critic's evaluation report.
+        ctx:            FastMCP context for logging and sampling.
+
+    Returns:
+        The corrected answer generated by the LLM.
+    """
+    logger.info("Running corrector generation via MCP Sampling...")
+    await ctx.info("Running corrector generation via MCP Sampling...")
+    problems = critique.problems
+
+    corrector_messages = [
+        SamplingMessage(
+            role="assistant",
+            content=TextContent(
+                type="text",
+                text=(
+                    "You are a correction editor.\n"
+                    "Rewrite answers using ONLY the supplied search results."
+                ),
+            ),
+        ),
+        SamplingMessage(
+            role="user",
+            content=TextContent(
+                type="text",
+                text=(f"""
+                    QUESTION:
+                    {question}
+
+                    SEARCH RESULTS:
+                    {search_results}
+
+                    CURRENT ANSWER:
+                    {draft_answer}
+
+                    PROBLEMS IDENTIFIED:
+                    {json.dumps(problems, indent=2)}
+
+                    Instructions:
+
+                    - Fix every problem.
+                    - Remove unsupported claims.
+                    - Add omitted information.
+                    - Keep answer concise.
+                    - Use only search results.
+                    - If the search results do not support a conclusion,
+                    explicitly state that the evidence is insufficient.
+                    - Do not infer, speculate, recommend, or generalize.
+                    - Every statement must be traceable to the search results.
+
+                    Output only the corrected answer.
+                    """),
+            ),
+        ),
+    ]
+
+    result = await ctx.sample(
+        messages=corrector_messages,
+        max_tokens=2000,
+        temperature=0.1,
+    )
+
+    if hasattr(result, "text"):
+        return result.text
+
+    return str(result)
+
+
+# 6. @resource — Hierarchical CRAG knowledge base
+
+
+@mcp.resource("knowledge://domain/docs/{query}")
+async def domain_knowledge_resource(query: str, ctx: Context) -> str:
+    """
+    Hierarchical CRAG knowledge resource with LLM-based ToT evaluation.
+
+    Implements the enhanced CRAG pipeline:
+      1. Multi-query expansion
+      2. Hierarchical 3-level retrieval (domain → section → sentence)
+      3. Tree-of-Thought LLM evaluation (3-persona assessment)
+      4. Tavily web fallback when internal docs are insufficient
+
+    Args:
+        query: The user's question or research topic.
+        ctx:   FastMCP context for logging and MCP protocol operations.
+
+    Returns:
+        Formatted context string with retrieved and evaluated knowledge.
+    """
+    logger.info("domain_knowledge_resource called | query='%s'", query)
+    await ctx.info(f"CRAG resource invoked for query: '{query}'")
+
+    # Step 1: Multi-query expansion with hierarchical retrieval
+    await ctx.debug("Step 1: Expanding query and retrieving via hierarchy...")
+    retrieved = _multi_query_retrieve_hierarchical(query, ctx)
+    await ctx.info(
+        f"Step 1 complete — hierarchical retrieval found " f"{len(retrieved)} chunks."
+    )
+
+    # Step 2: LLM-based ToT evaluation
+    await ctx.debug("Step 2: Running Tree-of-Thought LLM evaluation (3 personas)...")
+    selected_chunks, fallback_needed = await _tot_evaluate_with_llm(
+        query, retrieved, ctx
+    )
+    await ctx.info(
+        f"Step 2 complete — {len(selected_chunks)} chunks passed ToT | "
+        f"fallback_needed={fallback_needed}"
+    )
+
+    results: list[str] = []
+
+    # Step 3: Format internal results
+    if selected_chunks:
+        await ctx.debug("Step 3: Formatting selected internal chunks...")
+        for chunk in selected_chunks:
+            path = chunk["domain"]
+            if chunk["section"]:
+                path += f" / {chunk['section']}"
+            results.append(f"[{chunk['level'].upper()} | {path}]\n{chunk['text']}")
+
+    # Step 4: Tavily fallback
+    if fallback_needed:
+        await ctx.info(
+            "Step 4: Internal docs insufficient - triggering Tavily fallback..."
+        )
+        tavily_results = await _tavily_fallback(query, ctx)
+        if tavily_results:
+            results.append("\n--- Web Fallback (Tavily) ---")
+            results.extend(tavily_results)
+            await ctx.info(
+                f"Step 4 complete — added {len(tavily_results)} Tavily results."
+            )
+        else:
+            await ctx.warning("Tavily fallback returned no results.")
+
+    if not results:
+        return (
+            "No relevant context found in the internal knowledge base or "
+            "web fallback for this query."
+        )
+
+    formatted = "\n\n".join(results)
+    await ctx.info("CRAG pipeline complete - returning context to agent.")
+    return formatted
+
+
+# 7. @tool — Reflection via MCP Sampling (Critic + Corrector loop)
 @mcp.tool()
 async def reflect_and_correct(
     question: str,
@@ -475,128 +814,181 @@ async def reflect_and_correct(
     ctx: Context,
 ) -> str:
     """
-    Two-stage Reflection Tool implemented via MCP Sampling.
+    Reflection Tool using MCP Sampling.
 
-    The server itself holds NO LLM and NO API keys.
-    Both the Critic and the Corrector LLM calls are delegated to the
-    MCP client via ctx.request_sampling(). The client's locally configured
-    LLM executes the generation and returns the text back to the server.
+    Workflow:
 
-    Stage 1 - Critic: Compares draft against search_results to identify
-      hallucinations, contradictions, and omissions.
+    Critic
+      ↓
+    If sufficient -> return answer
 
-    Stage 2 - Corrector: Uses the critique + search_results to rewrite
-      the draft, grounding all claims in the actual evidence.
-
-    Args:
-        question:       The user's original question.
-        draft_answer:   The agent's current draft answer.
-        search_results: Raw retrieved context (from query_knowledge_base or Tavily).
-        ctx:            FastMCP context — used to invoke MCP Sampling.
-
-    Returns:
-        JSON string with keys: critique, corrected_answer, is_sufficient.
+    Else:
+      ↓
+    Corrector
+      ↓
+    Critic again
+      ↓
+    Repeat until:
+      - sufficient OR
+      - max iterations reached
     """
-    logger.info("reflect_and_correct invoked | question='%s'", question[:80])
+
+    logger.info(
+        "reflect_and_correct invoked | question='%s'",
+        question[:80],
+    )
+
     await ctx.info(f"Reflection tool invoked for question: '{question[:80]}'")
 
-    # Stage 1: Critic via MCP Sampling
-    await ctx.info("Stage 1: Requesting CRITIC generation via MCP Sampling...")
+    MAX_ITERATIONS = 2
 
-    critic_text = (
-        "You are a rigorous Critic. Compare this draft answer against the "
-        "search results and identify ALL problems:\n"
-        "- Hallucinations: claims in the draft NOT supported by search results\n"
-        "- Contradictions: claims that CONFLICT with search results\n"
-        "- Omissions: important points in results the draft missed\n\n"
-        "Cite specific evidence from search results for each problem.\n"
-        "Output ONLY plain-text critique — no JSON, no corrected answer.\n\n"
-        f"ORIGINAL QUESTION:\n{question}\n\n"
-        f"SEARCH RESULTS (ground truth):\n{search_results}\n\n"
-        f"DRAFT ANSWER TO CRITIQUE:\n{draft_answer}"
-    )
-    try:
-        critic_result = await ctx.sample(
-            critic_text,
-            temperature=0.0,
-            max_tokens=1024,
-        )
-        logger.info(type(critic_result))
-        logger.info(repr(critic_result))
-        critique = (
-            critic_result.text if hasattr(critic_result, "text") else str(critic_result)
-        )
-        logger.debug("Stage 1 critique received (%d chars).", len(critique))
-        await ctx.info("Stage 1 complete — critique received from client LLM.")
-    except Exception as exc:
-        logger.error("Stage 1 sampling failed: %s", exc)
-        await ctx.error(f"Critic sampling failed: {exc}")
-        critique = f"Critic unavailable: {exc}"
+    current_answer = draft_answer
 
-    # Stage 2: Corrector via MCP Sampling
-    await ctx.info("Stage 2: Requesting CORRECTOR generation via MCP Sampling...")
+    retry_count = 0
 
-    corrector_text = (
-        "You are a skilled Editor. Rewrite the draft answer to"
-        "fix EVERY problem"
-        "identified in the critique. Use the search results as "
-        "your ONLY ground truth.\n\n"
-        "Rules:\n"
-        "- Replace hallucinated claims with what search results actually say\n"
-        "- Do not introduce new claims not in the search results\n"
-        "- Address every point in the critique\n"
-        "- Output ONLY the corrected answer as prose — no JSON, no labels\n\n"
-        f"ORIGINAL QUESTION:\n{question}\n\n"
-        f"SEARCH RESULTS (ground truth):\n{search_results}\n\n"
-        f"DRAFT ANSWER:\n{draft_answer}\n\n"
-        f"CRITIQUE TO FIX:\n{critique}"
-    )
-    try:
-        corrector_result = await ctx.sample(
-            corrector_text,
-            temperature=0.1,
-            max_tokens=2048,
-        )
-        corrected_answer = (
-            corrector_result.text
-            if hasattr(corrector_result, "text")
-            else str(corrector_result)
-        )
-        logger.debug(
-            "Stage 2 corrected answer received (%d chars).", len(corrected_answer)
-        )
-        await ctx.info("Stage 2 complete — corrected answer received from client LLM.")
-    except Exception as exc:
-        logger.error("Stage 2 sampling failed: %s", exc)
-        await ctx.error(f"Corrector sampling failed: {exc}")
-        corrected_answer = draft_answer  # Fall back to original draft
+    final_critique = None
 
-    # Determine sufficiency
-    insufficient_signals = [
-        "hallucin",
-        "unsupported",
-        "speculative",
-        "not mentioned",
-        "contradicts",
-        "no evidence",
-        "not grounded",
-        "inaccurate",
-    ]
-    is_sufficient = not any(s in critique.lower() for s in insufficient_signals)
+    # Reflection Loop
+
+    for iteration in range(MAX_ITERATIONS):
+
+        await ctx.info(f"Reflection iteration " f"{iteration + 1}/{MAX_ITERATIONS}")
+
+        logger.info(
+            "Reflection iteration %d/%d",
+            iteration + 1,
+            MAX_ITERATIONS,
+        )
+
+        # Stage 1: Critic
+
+        try:
+            await ctx.info(f"Running CRITIC pass " f"{iteration + 1}/{MAX_ITERATIONS}")
+
+            critique = await _run_critic(
+                question=question,
+                draft_answer=current_answer,
+                search_results=search_results,
+                ctx=ctx,
+            )
+
+            final_critique = critique
+
+            logger.info(
+                "Critic result | sufficient=%s | problems=%d",
+                critique.is_sufficient,
+                len(critique.problems),
+            )
+
+        except Exception as exc:
+            logger.error(
+                "Critic failed on iteration %d: %s",
+                iteration + 1,
+                exc,
+            )
+
+            await ctx.error(f"Critic failed on iteration " f"{iteration + 1}: {exc}")
+
+            result = {
+                "critique": str(exc),
+                "corrected_answer": current_answer,
+                "is_sufficient": False,
+                "retry_count": retry_count,
+            }
+
+            return json.dumps(result, indent=2)
+
+        # Critic says answer is sufficient
+
+        if critique.is_sufficient:
+
+            logger.info(
+                "Critic marked answer sufficient " "at iteration %d",
+                iteration + 1,
+            )
+
+            await ctx.info("Answer deemed sufficient. " "Skipping correction.")
+
+            break
+
+        # Stage 2: Corrector
+
+        await ctx.info(f"Running CORRECTOR pass " f"{iteration + 1}/{MAX_ITERATIONS}")
+
+        logger.info(
+            "Running corrector | problems=%d",
+            len(critique.problems),
+        )
+
+        try:
+
+            corrected_answer = await _run_corrector(
+                question=question,
+                draft_answer=current_answer,
+                search_results=search_results,
+                critique=critique,
+                ctx=ctx,
+            )
+
+            current_answer = corrected_answer
+
+            retry_count += 1
+
+            logger.info(
+                "Corrector completed | retry_count=%d",
+                retry_count,
+            )
+
+        except Exception as exc:
+
+            logger.error(
+                "Corrector failed on iteration %d: %s",
+                iteration + 1,
+                exc,
+            )
+
+            await ctx.error(f"Corrector failed on iteration " f"{iteration + 1}: {exc}")
+
+            break
+
+    # Safety fallback
+
+    if final_critique is None:
+
+        result = {
+            "critique": "No critique generated.",
+            "corrected_answer": current_answer,
+            "is_sufficient": False,
+            "retry_count": retry_count,
+        }
+
+        return json.dumps(result, indent=2)
+
+    # Final result
 
     result = {
-        "critique": critique,
-        "corrected_answer": corrected_answer,
-        "is_sufficient": is_sufficient,
+        "critique": final_critique.model_dump(),
+        "corrected_answer": current_answer,
+        "is_sufficient": final_critique.is_sufficient,
+        "retry_count": retry_count,
     }
 
-    logger.info("reflect_and_correct complete | is_sufficient=%s", is_sufficient)
-    await ctx.info(f"Reflection complete | is_sufficient={is_sufficient}")
+    logger.info(
+        "Reflection complete | sufficient=%s | retries=%d",
+        final_critique.is_sufficient,
+        retry_count,
+    )
+
+    await ctx.info(
+        f"Reflection complete | "
+        f"is_sufficient={final_critique.is_sufficient} | "
+        f"retries={retry_count}"
+    )
 
     return json.dumps(result, indent=2)
 
 
-# 8. Entry point
+# 8. Entry point to start the FastMCP server
 
 
 def main() -> None:

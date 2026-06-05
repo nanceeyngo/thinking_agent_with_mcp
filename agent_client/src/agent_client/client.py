@@ -17,7 +17,6 @@ from __future__ import annotations
 import asyncio
 from typing import Any
 
-from dotenv import load_dotenv
 from fastmcp import Client
 from fastmcp.client.logging import LogMessage
 from fastmcp.client.sampling import SamplingMessage, SamplingParams
@@ -32,8 +31,6 @@ from agent_client.logging_config import (
     get_server_log_writer,
     setup_client_logger,
 )
-
-load_dotenv()
 
 # 1. Settings
 
@@ -132,44 +129,94 @@ async def sampling_handler(
 
     This is the 'Sampling Paradox': the server requests an LLM
     completion from the client rather than hosting its own model.
+
+    Args:
+        messages: List of SamplingMessage objects, where each message has
+                 'role' (string: 'user'|'assistant'|'system') and
+                 'content' (TextContent with 'type' and 'text' fields).
+        params: SamplingParams with temperature, max_tokens, etc.
+        context: MCP RequestContext for logging.
+
+    Returns:
+        String response from the LLM.
     """
     client_log.info(
         "MCP Sampling request received from server | request_id=%s",
         context.request_id,
     )
 
-    # Extract the text prompt from the sampling message content block
-    # Content arrives as a dict with {"type": "text", "text": "..."}
-    prompt_parts: list[str] = []
+    # Import LangChain message types
+    from langchain_core.messages import HumanMessage, SystemMessage
 
-    if isinstance(messages, str):
-        prompt_parts.append(messages)
+    # Properly convert SamplingMessages to LangChain messages
+    lc_messages: list = []
+    system_message: str | None = None
 
-    else:
-        for msg in messages:
-
-            if isinstance(msg, str):
-                prompt_parts.append(msg)
-
-            elif hasattr(msg, "content"):
-                prompt_parts.append(str(msg.content))
-
+    for msg in messages:
+        # Handle both SamplingMessage objects and dict representations
+        if isinstance(msg, dict):
+            role = msg.get("role", "user")
+            content_obj = msg.get("content", {})
+            if isinstance(content_obj, dict):
+                text_content = content_obj.get("text", "")
             else:
-                prompt_parts.append(str(msg))
+                text_content = str(content_obj)
+        else:
+            # SamplingMessage object from mcp.types
+            role = getattr(msg, "role", "user")
+            content = getattr(msg, "content", None)
+            if content is None:
+                text_content = ""
+            elif isinstance(content, dict):
+                # TextContent as dict: {"type": "text", "text": "..."}
+                text_content = content.get("text", "")
+            elif hasattr(content, "text"):
+                # TextContent object with .text attribute
+                text_content = content.text
+            else:
+                text_content = str(content)
 
-    full_prompt = "\n".join(prompt_parts)
+        if role == "system":
+            system_message = text_content
+
+        elif role == "assistant" and system_message is None:
+            system_message = text_content
+
+        elif role == "user":
+            lc_messages.append(HumanMessage(content=text_content))
+
+    # If no system message in messages, but we have text to process,
+    # treat the first user message as the main prompt
+    # (system message if provided should take precedence)
 
     client_log.debug(
-        "Sampling prompt length=%d chars | max_tokens=%s | " "temperature=%s",
-        len(full_prompt),
+        "Sampling request converted | messages=%d | system_msg=%s | "
+        "max_tokens=%s | temperature=%s",
+        len(messages),
+        "present" if system_message else "absent",
         getattr(params, "maxTokens", "default"),
         getattr(params, "temperature", "default"),
     )
 
     try:
-        from langchain_core.messages import HumanMessage
+        # Build message list with system message if present
+        final_messages = []
+        if system_message:
+            final_messages.append(SystemMessage(content=system_message))
+        final_messages.extend(lc_messages)
 
-        response = await llm.ainvoke([HumanMessage(content=full_prompt)])
+        # Extract sampling parameters
+        max_tokens = getattr(params, "maxTokens", None)
+        temperature = getattr(params, "temperature", None)
+
+        # Call LLM with proper parameters
+        response = await llm.ainvoke(
+            final_messages,
+            config={
+                "max_tokens": max_tokens or 2048,
+                "temperature": temperature if temperature is not None else 0.0,
+            },
+        )
         result_text = response.content
         client_log.info(
             "Sampling response generated | length=%d chars", len(result_text)
@@ -331,8 +378,7 @@ async def reflect_and_correct(
 AGENT_TOOLS = [retrieve_domain_context, reflect_and_correct]
 
 AGENT_SYSTEM_PROMPT = """
-You are a Thinking Agent connected to an enterprise MCP
-server.
+You are a Thinking Agent connected to an enterprise MCP server.
 
 Available tools:
 - retrieve_domain_context: Reads the MCP CRAG resource.
@@ -341,24 +387,30 @@ Available tools:
 
 MANDATORY PROTOCOL
 
-PATH A - COMPLEX / TRADE-OFF QUERIES (evaluate, compare, recommend):
+PATH A - COMPLEX ANALYSIS / TRADE-OFF QUERIES (evaluate, compare, recommend):
 
   Step 1: Call retrieve_domain_context with the user's question.
           Store the returned context as your search_results.
 
-  Step 2: Draft an initial structured answer using ONLY the context returned.
+  Step 2: Draft a STRUCTURED analysis that:
+          - Identifies multiple perspectives or options
+          - Lists trade-offs explicitly
+          - Cites specific evidence for each claim
 
   Step 3: Call reflect_and_correct with:
             question       = original user question
-            draft_answer   = your Step 2 draft
+            draft_answer   = your Step 2 structured draft
             search_results = exact context from Step 1
           Use the 'corrected_answer' from the JSON result as your final answer.
 
-PATH B - FACTUAL / RESEARCH QUERIES (what is, latest, recent):
+PATH B - FACTUAL / INFORMATION RETRIEVAL QUERIES (what is, latest, recent):
 
   Step 1: Call retrieve_domain_context with the user's question.
 
-  Step 2: Draft an initial answer from the returned context.
+  Step 2: Draft a CONCISE answer that:
+          - Directly answers the question from search results
+          - Uses verbatim quotes for key claims when possible
+          - Avoids speculation beyond the provided context
 
   Step 3: Call reflect_and_correct (same args as PATH A).
           Use 'corrected_answer' as your final answer.
@@ -371,6 +423,8 @@ ABSOLUTE RULES:
 4. Never present a draft as a final answer without reflection.
 5. Ground all factual claims in the context returned by
    retrieve_domain_context.
+6. Choose PATH A if the query asks for evaluation/recommendation/comparison.
+7. Choose PATH B if the query asks for factual information or current status.
 """
 
 

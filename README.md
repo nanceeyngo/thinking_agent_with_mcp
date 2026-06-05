@@ -67,7 +67,7 @@ thinking_agent_with_mcp/
 ### 1. Clone the repo
 ```bash
 git clone https://github.com/nanceeyngo/thinking_agent_with_mcp.git
-cd thinking-agent-stage2
+cd thinking_agent_with_mcp
 ```
 
 ### 2. Create your `.env` file
