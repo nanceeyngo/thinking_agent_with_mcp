@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 
 # Constants
-LOG_FILE = Path("agent_system.log")
+LOG_FILE = Path("mcp_agent_system.log")
 TIMESTAMP_FMT = "%Y-%m-%d %H:%M:%S"
 
 # Custom formatters
@@ -45,7 +45,7 @@ class ServerFormatter(logging.Formatter):
 def setup_client_logger(name: str = "agent_client") -> logging.Logger:
     """
     Return a logger that writes [CLIENT] entries to stdout and
-    agent_system.log.
+    mcp_agent_system.log.
     """
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
@@ -75,7 +75,7 @@ def setup_client_logger(name: str = "agent_client") -> logging.Logger:
 def get_server_log_writer() -> logging.Logger:
     """
     Return a logger that writes [SERVER] entries to stdout and
-    agent_system.log.
+    mcp_agent_system.log.
     Called by the MCP log_handler callback when server notification
     logs arrive.
     """

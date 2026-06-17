@@ -1,7 +1,7 @@
 """
 agent_client/client.py
 
-MCP Client + LangChain AI Agent.
+MCP Client + LangChain AI Agent (Stage 3 - Vector Log Store).
 
 Responsibilities:
   1. Connect to the FastMCP server over streamable-http
@@ -10,11 +10,21 @@ Responsibilities:
      of server)
   4. Initialize LangChain create_agent with wrapped tools
   5. Write dual-stream logs ([CLIENT] / [SERVER]) to agent_system.log
+
+New in Stage 3:
+- Every significant event is persisted to a LangGraph SQLite vector
+  store (log_store.py) under a hierarchical dot-separated namespace.
+- The flat agent_system.log file is retained for human readability.
+- LogEntry objects carry a validated schema:
+    session_id, mcp_interaction_type, component, content, metadata.
+- Integer dict-keys are re-cast after JSON round-trips.
 """
 
 from __future__ import annotations
 
 import asyncio
+import time
+import uuid
 from typing import Any
 
 from fastmcp import Client
@@ -22,7 +32,6 @@ from fastmcp.client.logging import LogMessage
 from fastmcp.client.sampling import SamplingMessage, SamplingParams
 from langchain.agents import create_agent
 from langchain.tools import tool
-from langchain_openai import ChatOpenAI
 from mcp.shared.context import RequestContext
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -32,12 +41,17 @@ from agent_client.logging_config import (
     setup_client_logger,
 )
 
+from agent_client.log_store import LogEntry, write_log
+
 # 1. Settings
 
 
 class Settings(BaseSettings):
-    openrouter_api_key: SecretStr
+    openrouter_api_key: SecretStr | None = None
     tavily_api_key: SecretStr | None = None
+    groq_api_key: SecretStr | None = None
+    use_groq: bool = False
+    groq_model_name: str = "llama-3.3-70b-versatile"
     # Free-tier model that doesn't require credit
     model_name: str = "nvidia/nemotron-3-super-120b-a12b:free"  # noqa
     model_temperature: float = 0.0
@@ -59,31 +73,75 @@ settings = Settings()  # type: ignore[call-arg]
 client_log = setup_client_logger("agent_client")
 server_log = get_server_log_writer()
 
+# 3. Session tracking
 
-# 3. LLM (used locally for sampling AND for the agent)
+# A single SESSION_ID identifies all log entries in this process run.
+# This UUID is stored in every LogEntry so the analysis agent can
+# reconstruct the full execution trace for a session.
+
+SESSION_ID: str = str(uuid.uuid4())
+client_log.info("Session started | session_id=%s", SESSION_ID)
+
+
+# 4. LLM (used locally for sampling AND for the agent)
 
 
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
-llm = ChatOpenAI(
-    model=settings.model_name,
-    temperature=settings.model_temperature,
-    openai_api_key=settings.openrouter_api_key.get_secret_value(),
-    openai_api_base=OPENROUTER_BASE_URL,
-    max_tokens=2048,
-    default_headers={
-        "HTTP-Referer": "https://thinking-agent-stage2",
-        "X-Title": "Thinking Agent Stage 2",
-    },
-)
+# llm = ChatOpenAI(
+#     model=settings.model_name,
+#     temperature=settings.model_temperature,
+#     openai_api_key=settings.openrouter_api_key.get_secret_value(),
+#     openai_api_base=OPENROUTER_BASE_URL,
+#     max_tokens=2048,
+#     default_headers={
+#         "HTTP-Referer": "https://thinking-agent-stage3",
+#         "X-Title": "Thinking Agent Stage 3",
+#     },
+# )
 
-client_log.info(
-    "LLM initialised: model=%s via OpenRouter",
-    settings.model_name,
-)
 
-# 4. MCP Callback Handlers
+def _get_llm():
+    if settings.use_groq and settings.groq_api_key:
+        from langchain_groq import ChatGroq  # type: ignore[import]
 
+        client_log.info("Using Groq LLM: %s", settings.groq_model_name)
+        return ChatGroq(
+            model=settings.groq_model_name,
+            temperature=settings.model_temperature,
+            api_key=settings.groq_api_key.get_secret_value(),
+            max_tokens=2048,
+            default_headers={
+                "HTTP-Referer": "https://thinking-agent-analysis",
+                "X-Title": "Thinking Agent Analysis Dashboard",
+            },
+        )
+    elif settings.openrouter_api_key:
+        from langchain_openai import ChatOpenAI
+
+        client_log.info("Using OpenRouter LLM: %s", settings.model_name)
+        return ChatOpenAI(
+            model=settings.model_name,
+            temperature=settings.model_temperature,
+            openai_api_key=settings.openrouter_api_key.get_secret_value(),
+            openai_api_base=OPENROUTER_BASE_URL,
+            max_tokens=2048,
+            default_headers={
+                "HTTP-Referer": "https://thinking-agent-analysis",
+                "X-Title": "Thinking Agent Analysis Dashboard",
+            },
+        )
+    else:
+        raise ValueError(
+            "No LLM configured. Set OPENROUTER_API_KEY or GROQ_API_KEY in .env"
+        )
+
+
+llm = _get_llm()
+
+client_log.info("LLM initialised")
+
+# 5. Helpers
 
 LOGGING_LEVEL_MAP = {
     "debug": 10,
@@ -92,13 +150,67 @@ LOGGING_LEVEL_MAP = {
     "error": 40,
     "critical": 50,
 }
+_store_warn_count = 0  # rate-limit repeated store warnings
+
+
+async def _store_entry(
+    mcp_interaction_type: str,
+    component: str,
+    content: str,
+    metadata: dict[str, Any] | None = None,
+) -> None:
+    """
+    Write a single log trace to the LangGraph vector store.
+
+    On first failure: logs a WARNING (visible to operator).
+    Repeated failures: suppressed after 3 to avoid log spam.
+    The flat agent_system.log is always written regardless.
+    """
+
+    global _store_warn_count
+    try:
+        entry = LogEntry(
+            session_id=SESSION_ID,
+            mcp_interaction_type=mcp_interaction_type,
+            component=component,
+            content=content,
+            metadata=metadata or {},
+        )
+        result = await write_log(entry)
+        # If result is empty string, write failed silently
+        if not result and _store_warn_count == 0:
+            client_log.warning(
+                "Vector store write returned empty key. " "Check database connection."
+            )
+        # if result.get("store_type") == "memory" and _store_warn_count == 0:
+        #     client_log.warning(
+        #         "Vector store is using InMemoryStore (not SQLite). "
+        #         "Logs will NOT persist. Check SqliteStore install."
+        #     )
+    except Exception as exc:
+        _store_warn_count += 1
+        if _store_warn_count <= 3:
+            client_log.warning(
+                "Vector store write failed (attempt %d): %s — ",
+                _store_warn_count,
+                exc,
+            )
+        elif _store_warn_count == 4:
+            client_log.warning(
+                "Vector store write errors suppressed after 3 attempts. "
+                "Flat log (agent_system.log) continues normally."
+            )
+    #     write_log(entry)
+    # except Exception as exc:
+    #     client_log.debug("Vector store write skipped: %s", exc)
+
+
+# 6. MCP Callback Handlers
 
 
 async def log_handler(message: LogMessage) -> None:
     """
-    Receive MCP log notifications forwarded from the server.
-    Write them to agent_system.log with [SERVER] prefix so they are
-    clearly distinct from [CLIENT] entries.
+    Receive MCP log notifications forwarded from the server; persist to vector store.
     """
     level_name = message.level.lower() if isinstance(message.level, str) else "info"
     level = LOGGING_LEVEL_MAP.get(level_name, 20)
@@ -113,6 +225,14 @@ async def log_handler(message: LogMessage) -> None:
 
     server_log.log(level, msg_text)
 
+    # Persist server notification to vector store
+    await _store_entry(
+        mcp_interaction_type="tool_observation",
+        component="mcp.server.notification",
+        content=msg_text,
+        metadata={"level": level_name, "session_id": SESSION_ID},
+    )
+
 
 async def sampling_handler(
     messages: list[SamplingMessage],
@@ -120,29 +240,12 @@ async def sampling_handler(
     context: RequestContext,
 ) -> str:
     """
-    Handle MCP Sampling requests routed from the server's Reflection tool.
-
-    The server calls ctx.request_sampling() which triggers this handler.
-    We execute the LLM call here using our locally configured ChatOpenAI
-    instance and return the generated text back to the server over the
-    transport layer.
-
-    This is the 'Sampling Paradox': the server requests an LLM
-    completion from the client rather than hosting its own model.
-
-    Args:
-        messages: List of SamplingMessage objects, where each message has
-                 'role' (string: 'user'|'assistant'|'system') and
-                 'content' (TextContent with 'type' and 'text' fields).
-        params: SamplingParams with temperature, max_tokens, etc.
-        context: MCP RequestContext for logging.
-
-    Returns:
-        String response from the LLM.
+    Handle MCP Sampling requests from the server.
+    Logs both the request and the response to the vector store.
     """
+    t0 = time.perf_counter()
     client_log.info(
-        "MCP Sampling request received from server | request_id=%s",
-        context.request_id,
+        "MCP Sampling request received from server | request_id=%s", context.request_id
     )
 
     # Import LangChain message types
@@ -185,18 +288,36 @@ async def sampling_handler(
         elif role == "user":
             lc_messages.append(HumanMessage(content=text_content))
 
+    # Log the sampling request to vector store
+    request_content = (
+        system_message
+        or (lc_messages[0].content if lc_messages else "")
+        or "sampling_request"
+    )
+
+    await _store_entry(
+        mcp_interaction_type="sampling_request",
+        component="mcp.sampling.request",
+        content=request_content[:2000],
+        metadata={
+            "request_id": str(context.request_id),
+            "message_count": len(messages),
+            "max_tokens": getattr(params, "maxTokens", None),
+        },
+    )
+
     # If no system message in messages, but we have text to process,
     # treat the first user message as the main prompt
     # (system message if provided should take precedence)
 
-    client_log.debug(
-        "Sampling request converted | messages=%d | system_msg=%s | "
-        "max_tokens=%s | temperature=%s",
-        len(messages),
-        "present" if system_message else "absent",
-        getattr(params, "maxTokens", "default"),
-        getattr(params, "temperature", "default"),
-    )
+    # client_log.debug(
+    #     "Sampling request converted | messages=%d | system_msg=%s | "
+    #     "max_tokens=%s | temperature=%s",
+    #     len(messages),
+    #     "present" if system_message else "absent",
+    #     getattr(params, "maxTokens", "default"),
+    #     getattr(params, "temperature", "default"),
+    # )
 
     try:
         # Build message list with system message if present
@@ -218,16 +339,36 @@ async def sampling_handler(
             },
         )
         result_text = response.content
+        latency_ms = int((time.perf_counter() - t0) * 1000)
         client_log.info(
             "Sampling response generated | length=%d chars", len(result_text)
         )
+
+        # Log sampling response
+        await _store_entry(
+            mcp_interaction_type="sampling_request",
+            component="mcp.sampling.response",
+            content=str(result_text)[:2000],
+            metadata={
+                "request_id": str(context.request_id),
+                "latency_ms": latency_ms,
+                "response_length": len(str(result_text)),
+            },
+        )
         return result_text
+
     except Exception as exc:
         client_log.error("Sampling LLM call failed: %s", exc)
+        await _store_entry(
+            mcp_interaction_type="sampling_request",
+            component="mcp.sampling.error",
+            content=f"Sampling error: {exc}",
+            metadata={"error": str(exc), "request_id": str(context.request_id)},
+        )
         return f"[Sampling error: {exc}]"
 
 
-# 5. MCP Client setup
+# 7. MCP Client setup
 
 mcp_client = Client(
     transport=settings.mcp_server_url,
@@ -268,6 +409,15 @@ async def _connect_and_discover() -> None:
             len(_resources_registry),
             resource_names,
         )
+    await _store_entry(
+        mcp_interaction_type="tool_invocation",
+        component="mcp.client.discovery",
+        content=f"Connected to MCP server. Tools: {list(_tools_registry.keys())}",
+        metadata={
+            "tool_count": len(_tools_registry),
+            "resource_count": len(_resources_registry),
+        },
+    )
 
 
 # 6. LangChain @tool wrappers around remote MCP capabilities
@@ -285,7 +435,7 @@ async def retrieve_domain_context(query: str) -> str:
     Queries the MCP server's domain knowledge resource using a full
     Corrective RAG pipeline:
       1. Multi-query expansion of your question
-      2. Hierarchical retrieval (domain → section → sentence level)
+      2. Hierarchical retrieval (domain -> section -> sentence level)
       3. Tree-of-Thought 3-persona relevance evaluation
       4. Tavily web fallback if internal docs are insufficient
 
@@ -299,7 +449,15 @@ async def retrieve_domain_context(query: str) -> str:
     Returns:
         Formatted context string with evaluated knowledge chunks.
     """
+    t0 = time.perf_counter()
     client_log.info("Resource read: knowledge://domain/docs/%s", query[:80])
+
+    await _store_entry(
+        mcp_interaction_type="resource_read",
+        component="mcp.client.resource_read.domain_docs",
+        content=f"Resource read request: {query}",
+        metadata={"query": query, "session_id": SESSION_ID},
+    )
 
     async def _call() -> str:
         async with mcp_client:
@@ -310,8 +468,16 @@ async def retrieve_domain_context(query: str) -> str:
             return str(result)
 
     result = await _call()
+    latency_ms = int((time.perf_counter() - t0) * 1000)
     client_log.info("Resource returned %d chars of context.", len(result))
-    return result
+
+    await _store_entry(
+        mcp_interaction_type="resource_read",
+        component="mcp.client.resource_read.domain_docs.result",
+        content=result[:2000],
+        metadata={"result_length": len(result), "latency_ms": latency_ms},
+    )
+    return result[:1500]
 
 
 @tool
@@ -342,9 +508,21 @@ async def reflect_and_correct(
     Returns:
         JSON string with keys: critique, corrected_answer, is_sufficient.
     """
+    t0 = time.perf_counter()
     client_log.info(
         "Tool call: reflect_and_correct | question='%s'",
         question[:80],
+    )
+
+    await _store_entry(
+        mcp_interaction_type="tool_invocation",
+        component="mcp.client.tool_call.reflect_and_correct",
+        content=f"Tool invocation: reflect_and_correct | question: {question[:200]}",
+        metadata={
+            "tool_name": "reflect_and_correct",
+            "question_length": len(question),
+            "draft_length": len(draft_answer),
+        },
     )
 
     async def _call() -> str:
@@ -369,11 +547,23 @@ async def reflect_and_correct(
             return str(result)
 
     result = await _call()
+    latency_ms = int((time.perf_counter() - t0) * 1000)
     client_log.info("reflect_and_correct returned %d chars.", len(result))
+
+    await _store_entry(
+        mcp_interaction_type="tool_invocation",
+        component="mcp.client.tool_call.reflect_and_correct.result",
+        content=result[:2000],
+        metadata={
+            "result_length": len(result),
+            "latency_ms": latency_ms,
+            "tool_name": "reflect_and_correct",
+        },
+    )
     return result
 
 
-# 7. LangChain Agent
+# 9. LangChain Agent
 
 AGENT_TOOLS = [retrieve_domain_context, reflect_and_correct]
 
@@ -444,7 +634,7 @@ def build_agent():
     return agent
 
 
-# 8. Helper: run agent on a query and print full logs
+# 10. Helper: run agent
 
 
 async def run_agent_query(agent, query: str, label: str = "") -> str:
@@ -469,6 +659,14 @@ async def run_agent_query(agent, query: str, label: str = "") -> str:
 
     from langchain_core.messages import AIMessage, HumanMessage
 
+    # Log the user query
+    await _store_entry(
+        mcp_interaction_type="agent_action",
+        component="agent.planning.query_received",
+        content=f"User query: {query}",
+        metadata={"label": label, "query_length": len(query)},
+    )
+
     final_response = ""
     async for event in agent.astream({"messages": [HumanMessage(content=query)]}):
         # Tool call observations
@@ -480,18 +678,30 @@ async def run_agent_query(agent, query: str, label: str = "") -> str:
                     tool_name,
                     str(msg.content),
                 )
+                await _store_entry(
+                    mcp_interaction_type="tool_observation",
+                    component=f"agent.tools.observation.{tool_name}",
+                    content=str(msg.content)[:2000],
+                    metadata={"tool_name": tool_name},
+                )
 
         # Agent reasoning and final answer (after reflection)
         if "model" in event:
             for msg in event["model"].get("messages", []):
                 if isinstance(msg, AIMessage) and msg.content.strip():
                     client_log.info("[THOUGHT/FINAL ANSWER]\n%s", msg.content)
+                    await _store_entry(
+                        mcp_interaction_type="agent_action",
+                        component="agent.planning.reflexive_loop",
+                        content=str(msg.content)[:2000],
+                        metadata={"step": "model_output"},
+                    )
 
     client_log.info("%s", sep)
     return final_response
 
 
-# 9. Main entry point
+# 11. Main entry point
 
 
 async def _async_main() -> None:
@@ -529,7 +739,7 @@ async def _async_main() -> None:
         # Brief pause between queries
         await asyncio.sleep(2)
 
-    client_log.info("All queries complete. Logs written to agent_system.log")
+    client_log.info("All queries complete. Logs written to mcp_agent_system.log")
 
 
 def main() -> None:

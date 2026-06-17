@@ -1,0 +1,2169 @@
+[2026-06-17 07:52:47] [ANALYSIS_AGENT] [INFO] Trying Neo4j connection: neo4j+ssc://315b1756.databases.neo4j.io…
+[2026-06-17 07:52:50] [ANALYSIS_AGENT] [INFO] Available databases: ['315b1756', 'system', 'system', 'system']
+[2026-06-17 07:52:50] [ANALYSIS_AGENT] [INFO] Neo4j connected — database: '315b1756' via neo4j+ssc://315b1756.databases.neo4j.io
+[2026-06-17 07:52:50] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 07:52:50] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 07:52:50] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 07:52:50] [ANALYSIS_AGENT] [INFO] Neo4j schema ensured on database '315b1756'
+[2026-06-17 07:52:50] [DASHBOARD] [INFO] Neo4j schema ensured.
+[2026-06-17 07:52:50] [ANALYSIS_AGENT] [INFO] Using Groq LLM: llama-3.3-70b-versatile
+[2026-06-17 07:52:52] [ANALYSIS_AGENT] [INFO] Building analysis agent with 10 tools: ['search_logs_semantic', 'list_recent_logs', 'get_session_trace', 'project_session_to_graph', 'query_knowledge_graph', 'get_graph_summary', 'calculate_latency_trends', 'calculate_token_trends', 'calculate_error_frequency', 'generate_performance_chart']
+[2026-06-17 07:52:52] [ANALYSIS_AGENT] [INFO] Analysis agent ready.
+[2026-06-17 07:52:52] [DASHBOARD] [INFO] Dashboard query: Analyse token consumption patterns from sampling_request logs and generate a tokens chart.
+[2026-06-17 07:52:52] [ANALYSIS_AGENT] [INFO] Analysis query: Analyse token consumption patterns from sampling_request logs and generate a tokens chart.
+[2026-06-17 07:52:53] [ANALYSIS_AGENT] [INFO] search_logs_semantic | query='sampling_request token consumption' | prefix='logs'
+[2026-06-17 07:52:53] [ANALYSIS_AGENT] [INFO] calculate_token_trends called
+[2026-06-17 07:52:53] [ANALYSIS_AGENT] [INFO] generate_performance_chart | chart_type=tokens | save=True
+[2026-06-17 07:52:53] [ANALYSIS_AGENT] [ERROR] generate_performance_chart error: Expecting value: line 1 column 1 (char 0)
+[2026-06-17 07:52:53] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_token_trends]
+{"status": "no_data", "message": "No token_count values found in sampling_request entries."}
+[2026-06-17 07:52:53] [ANALYSIS_AGENT] [INFO] [TOOL OBS — generate_performance_chart]
+{"status": "error", "message": "Expecting value: line 1 column 1 (char 0)"}
+[2026-06-17 07:52:53] [ANALYSIS_AGENT] [INFO] search_logs_semantic returned 15 results
+[2026-06-17 07:52:53] [ANALYSIS_AGENT] [INFO] [TOOL OBS — search_logs_semantic]
+[
+  {
+    "key": "fadd6681-56d0-4a68-b652-4db3923e597d",
+    "namespace": [
+      "logs",
+      "mcp",
+      "client",
+      "resource_read",
+      "domain_docs"
+    ],
+    "score": 0.2795064449310303,
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "resource_re
+[2026-06-17 07:53:10] [ANALYSIS_AGENT] [INFO] calculate_token_trends called
+[2026-06-17 07:53:10] [ANALYSIS_AGENT] [INFO] generate_performance_chart | chart_type=tokens | save=True
+[2026-06-17 07:53:10] [ANALYSIS_AGENT] [ERROR] generate_performance_chart error: Expecting value: line 1 column 1 (char 0)
+[2026-06-17 07:53:10] [ANALYSIS_AGENT] [INFO] [TOOL OBS — generate_performance_chart]
+{"status": "error", "message": "Expecting value: line 1 column 1 (char 0)"}
+[2026-06-17 07:53:10] [ANALYSIS_AGENT] [INFO] calculate_token_trends: total=1206 mean=1206.0
+[2026-06-17 07:53:10] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_token_trends]
+{
+  "status": "ok",
+  "total_sampling_requests": 1,
+  "total_tokens": 1206,
+  "mean_tokens_per_request": 1206.0,
+  "p95_tokens": 1206.0,
+  "per_session_totals": {
+    "661ec992-8756-436c-b89f-6eb0c514a66f": 1206
+  },
+  "points": [
+    {
+      "timestamp": 1781679127.5717237,
+      "token_count": 120
+[2026-06-17 07:53:53] [ANALYSIS_AGENT] [INFO] generate_performance_chart | chart_type=tokens | save=True
+[2026-06-17 07:53:53] [ANALYSIS_AGENT] [INFO] calculate_token_trends called
+[2026-06-17 07:53:53] [ANALYSIS_AGENT] [INFO] calculate_token_trends: total=1206 mean=1206.0
+[2026-06-17 07:53:53] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_token_trends]
+{
+  "status": "ok",
+  "total_sampling_requests": 1,
+  "total_tokens": 1206,
+  "mean_tokens_per_request": 1206.0,
+  "p95_tokens": 1206.0,
+  "per_session_totals": {
+    "661ec992-8756-436c-b89f-6eb0c514a66f": 1206
+  },
+  "points": [
+    {
+      "timestamp": 1781679127.5717237,
+      "token_count": 120
+[2026-06-17 07:53:53] [ANALYSIS_AGENT] [INFO] Chart saved to charts\tokens_20260617_075353.png
+[2026-06-17 07:53:53] [ANALYSIS_AGENT] [INFO] [TOOL OBS — generate_performance_chart]
+{
+  "status": "ok",
+  "chart_type": "tokens",
+  "description": "Token chart: 1 sessions plotted",
+  "chart_path": "charts\\tokens_20260617_075353.png",
+  "has_image": true,
+  "image_base64": "iVBORw0KGgoAAAANSUhEUgAAAxAAAAHkCAYAAACuZcnbAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjEwLjksIGh0dHBz
+[2026-06-17 07:53:53] [ANALYSIS_AGENT] [ERROR] Agent execution failed: Error code: 413 - {'error': {'message': 'Request too large for model `llama-3.3-70b-versatile` in organization `org_01kv5f7qfaew49rptz6m1fkjgj` service tier `on_demand` on tokens per minute (TPM): Limit 12000, Requested 31826, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+Traceback (most recent call last):
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 244, in run_analysis_query
+    async for event in agent.astream({"messages": [HumanMessage(content=query)]}):
+    ...<23 lines>...
+                    final_answer = str(msg.content)
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3407, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 706, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 733, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        step.ainvoke(input, config, **kwargs), context=context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 501, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1378, in amodel_node
+    model_response = await _execute_model_async(request)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1350, in _execute_model_async
+    output = await model_.ainvoke(messages)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5894, in ainvoke
+    return await self.bound.ainvoke(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 497, in ainvoke
+    llm_result = await self.agenerate_prompt(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1834, in agenerate_prompt
+    return await self.agenerate(
+           ^^^^^^^^^^^^^^^^^^^^^
+        prompt_messages, stop=stop, callbacks=callbacks, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1792, in agenerate
+    raise exceptions[0]
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 2127, in _agenerate_with_cache
+    result = await self._agenerate(
+             ^^^^^^^^^^^^^^^^^^^^^^
+        messages, stop=stop, run_manager=run_manager, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_groq\chat_models.py", line 648, in _agenerate
+    response = await self.async_client.create(messages=message_dicts, **params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\resources\chat\completions.py", line 941, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...<47 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\_base_client.py", line 1762, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\_base_client.py", line 1576, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.APIStatusError: Error code: 413 - {'error': {'message': 'Request too large for model `llama-3.3-70b-versatile` in organization `org_01kv5f7qfaew49rptz6m1fkjgj` service tier `on_demand` on tokens per minute (TPM): Limit 12000, Requested 31826, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+During task with name 'model' and id '755c9cb0-34ef-4b94-28c2-2ad9c92be994'
+[2026-06-17 07:53:53] [DASHBOARD] [INFO] Query completed in 61.7s
+[2026-06-17 08:45:53] [ANALYSIS_AGENT] [INFO] Trying Neo4j connection: neo4j+ssc://315b1756.databases.neo4j.io…
+[2026-06-17 08:45:56] [ANALYSIS_AGENT] [INFO] Available databases: ['315b1756', 'system', 'system', 'system']
+[2026-06-17 08:45:56] [ANALYSIS_AGENT] [INFO] Neo4j connected — database: '315b1756' via neo4j+ssc://315b1756.databases.neo4j.io
+[2026-06-17 08:45:57] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 08:45:57] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 08:45:58] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 08:45:58] [ANALYSIS_AGENT] [INFO] Neo4j schema ensured on database '315b1756'
+[2026-06-17 08:45:58] [DASHBOARD] [INFO] Neo4j schema ensured.
+[2026-06-17 08:45:58] [ANALYSIS_AGENT] [INFO] Using Groq LLM: llama-3.3-70b-versatile
+[2026-06-17 08:45:59] [ANALYSIS_AGENT] [INFO] Building analysis agent with 10 tools: ['search_logs_semantic', 'list_recent_logs', 'get_session_trace', 'project_session_to_graph', 'query_knowledge_graph', 'get_graph_summary', 'calculate_latency_trends', 'calculate_token_trends', 'calculate_error_frequency', 'generate_performance_chart']
+[2026-06-17 08:45:59] [ANALYSIS_AGENT] [INFO] Analysis agent ready.
+[2026-06-17 08:45:59] [DASHBOARD] [INFO] Dashboard query: Analyse token consumption patterns from sampling_request logs and generate a tokens chart.
+[2026-06-17 08:45:59] [ANALYSIS_AGENT] [INFO] Analysis query: Analyse token consumption patterns from sampling_request logs and generate a tokens chart.
+[2026-06-17 08:46:03] [ANALYSIS_AGENT] [INFO] search_logs_semantic | query='sampling_request token consumption' | prefix='logs'
+[2026-06-17 08:46:03] [ANALYSIS_AGENT] [INFO] calculate_token_trends called
+[2026-06-17 08:46:03] [ANALYSIS_AGENT] [INFO] generate_performance_chart | chart_type=tokens | save=True
+[2026-06-17 08:46:03] [ANALYSIS_AGENT] [ERROR] generate_performance_chart error: Expecting value: line 1 column 1 (char 0)
+[2026-06-17 08:46:03] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_token_trends]
+{"status": "no_data", "message": "No token_count values found in sampling_request entries."}
+[2026-06-17 08:46:03] [ANALYSIS_AGENT] [INFO] [TOOL OBS — generate_performance_chart]
+{"status": "error", "message": "Expecting value: line 1 column 1 (char 0)"}
+[2026-06-17 08:46:03] [ANALYSIS_AGENT] [INFO] search_logs_semantic returned 15 results
+[2026-06-17 08:46:03] [ANALYSIS_AGENT] [INFO] [TOOL OBS — search_logs_semantic]
+[
+  {
+    "key": "fadd6681-56d0-4a68-b652-4db3923e597d",
+    "namespace": [
+      "logs",
+      "mcp",
+      "client",
+      "resource_read",
+      "domain_docs"
+    ],
+    "score": 0.2795064449310303,
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "resource_re
+[2026-06-17 08:46:20] [ANALYSIS_AGENT] [INFO] calculate_token_trends called
+[2026-06-17 08:46:20] [ANALYSIS_AGENT] [INFO] generate_performance_chart | chart_type=tokens | save=True
+[2026-06-17 08:46:20] [ANALYSIS_AGENT] [INFO] calculate_token_trends: total=1206 mean=1206.0
+[2026-06-17 08:46:20] [ANALYSIS_AGENT] [ERROR] generate_performance_chart error: Expecting value: line 1 column 1 (char 0)
+[2026-06-17 08:46:20] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_token_trends]
+{
+  "status": "ok",
+  "total_sampling_requests": 1,
+  "total_tokens": 1206,
+  "mean_tokens_per_request": 1206.0,
+  "p95_tokens": 1206.0,
+  "per_session_totals": {
+    "661ec992-8756-436c-b89f-6eb0c514a66f": 1206
+  },
+  "points": [
+    {
+      "timestamp": 1781679127.5717237,
+      "token_count": 120
+[2026-06-17 08:46:20] [ANALYSIS_AGENT] [INFO] [TOOL OBS — generate_performance_chart]
+{"status": "error", "message": "Expecting value: line 1 column 1 (char 0)"}
+[2026-06-17 08:47:03] [ANALYSIS_AGENT] [INFO] calculate_token_trends called
+[2026-06-17 08:47:03] [ANALYSIS_AGENT] [INFO] generate_performance_chart | chart_type=tokens | save=True
+[2026-06-17 08:47:03] [ANALYSIS_AGENT] [INFO] calculate_token_trends: total=1206 mean=1206.0
+[2026-06-17 08:47:03] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_token_trends]
+{
+  "status": "ok",
+  "total_sampling_requests": 1,
+  "total_tokens": 1206,
+  "mean_tokens_per_request": 1206.0,
+  "p95_tokens": 1206.0,
+  "per_session_totals": {
+    "661ec992-8756-436c-b89f-6eb0c514a66f": 1206
+  },
+  "points": [
+    {
+      "timestamp": 1781679127.5717237,
+      "token_count": 120
+[2026-06-17 08:47:03] [ANALYSIS_AGENT] [INFO] Chart saved to charts\tokens_20260617_084703.png
+[2026-06-17 08:47:03] [ANALYSIS_AGENT] [INFO] [TOOL OBS — generate_performance_chart]
+{
+  "status": "ok",
+  "chart_type": "tokens",
+  "description": "Token chart: 1 sessions plotted",
+  "chart_path": "charts\\tokens_20260617_084703.png",
+  "has_image": true,
+  "image_base64": "iVBORw0KGgoAAAANSUhEUgAAAxAAAAHkCAYAAACuZcnbAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjEwLjksIGh0dHBz
+[2026-06-17 08:47:05] [ANALYSIS_AGENT] [ERROR] Agent execution failed: Error code: 413 - {'error': {'message': 'Request too large for model `llama-3.3-70b-versatile` in organization `org_01kv5f7qfaew49rptz6m1fkjgj` service tier `on_demand` on tokens per minute (TPM): Limit 12000, Requested 31824, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+Traceback (most recent call last):
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 244, in run_analysis_query
+    async for event in agent.astream({"messages": [HumanMessage(content=query)]}):
+    ...<23 lines>...
+                    final_answer = str(msg.content)
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3407, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 706, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 733, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        step.ainvoke(input, config, **kwargs), context=context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 501, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1378, in amodel_node
+    model_response = await _execute_model_async(request)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1350, in _execute_model_async
+    output = await model_.ainvoke(messages)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5894, in ainvoke
+    return await self.bound.ainvoke(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 497, in ainvoke
+    llm_result = await self.agenerate_prompt(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1834, in agenerate_prompt
+    return await self.agenerate(
+           ^^^^^^^^^^^^^^^^^^^^^
+        prompt_messages, stop=stop, callbacks=callbacks, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1792, in agenerate
+    raise exceptions[0]
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 2127, in _agenerate_with_cache
+    result = await self._agenerate(
+             ^^^^^^^^^^^^^^^^^^^^^^
+        messages, stop=stop, run_manager=run_manager, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_groq\chat_models.py", line 648, in _agenerate
+    response = await self.async_client.create(messages=message_dicts, **params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\resources\chat\completions.py", line 941, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...<47 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\_base_client.py", line 1762, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\_base_client.py", line 1576, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.APIStatusError: Error code: 413 - {'error': {'message': 'Request too large for model `llama-3.3-70b-versatile` in organization `org_01kv5f7qfaew49rptz6m1fkjgj` service tier `on_demand` on tokens per minute (TPM): Limit 12000, Requested 31824, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+During task with name 'model' and id '04bcd086-82d9-8d77-2152-e92a66a61090'
+[2026-06-17 08:47:05] [DASHBOARD] [INFO] Query completed in 65.7s
+[2026-06-17 09:01:50] [ANALYSIS_AGENT] [INFO] Trying Neo4j connection: neo4j+ssc://315b1756.databases.neo4j.io…
+[2026-06-17 09:01:59] [ANALYSIS_AGENT] [INFO] Available databases: ['315b1756', 'system', 'system', 'system']
+[2026-06-17 09:01:59] [ANALYSIS_AGENT] [INFO] Neo4j connected — database: '315b1756' via neo4j+ssc://315b1756.databases.neo4j.io
+[2026-06-17 09:01:59] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 09:02:00] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 09:02:01] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 09:02:01] [ANALYSIS_AGENT] [INFO] Neo4j schema ensured on database '315b1756'
+[2026-06-17 09:02:01] [DASHBOARD] [INFO] Neo4j schema ensured.
+[2026-06-17 09:02:01] [ANALYSIS_AGENT] [INFO] Using Groq LLM: llama-3.3-70b-versatile
+[2026-06-17 09:02:03] [ANALYSIS_AGENT] [INFO] Building analysis agent with 10 tools: ['search_logs_semantic', 'list_recent_logs', 'get_session_trace', 'project_session_to_graph', 'query_knowledge_graph', 'get_graph_summary', 'calculate_latency_trends', 'calculate_token_trends', 'calculate_error_frequency', 'generate_performance_chart']
+[2026-06-17 09:02:03] [ANALYSIS_AGENT] [INFO] Analysis agent ready.
+[2026-06-17 09:02:03] [DASHBOARD] [INFO] Dashboard query: Analyse token consumption patterns from sampling_request logs and generate a tokens chart.
+[2026-06-17 09:02:03] [ANALYSIS_AGENT] [INFO] Analysis query: Analyse token consumption patterns from sampling_request logs and generate a tokens chart.
+[2026-06-17 09:02:11] [ANALYSIS_AGENT] [INFO] search_logs_semantic | query='sampling_request token consumption' | prefix='logs'
+[2026-06-17 09:02:11] [ANALYSIS_AGENT] [INFO] calculate_token_trends called
+[2026-06-17 09:02:11] [ANALYSIS_AGENT] [INFO] generate_performance_chart | chart_type=tokens | save=True
+[2026-06-17 09:02:11] [ANALYSIS_AGENT] [ERROR] generate_performance_chart error: Expecting value: line 1 column 1 (char 0)
+[2026-06-17 09:02:28] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_token_trends]
+{"status": "no_data", "message": "No token_count values found in sampling_request entries."}
+[2026-06-17 09:02:28] [ANALYSIS_AGENT] [INFO] AsyncSqliteStore initialised: mcp_agent_log.db
+[2026-06-17 09:02:28] [ANALYSIS_AGENT] [INFO] search_logs_semantic returned 15 results
+[2026-06-17 09:02:28] [ANALYSIS_AGENT] [INFO] [TOOL OBS — generate_performance_chart]
+{"status": "error", "message": "Expecting value: line 1 column 1 (char 0)"}
+[2026-06-17 09:02:28] [ANALYSIS_AGENT] [INFO] [TOOL OBS — search_logs_semantic]
+[
+  {
+    "key": "fadd6681-56d0-4a68-b652-4db3923e597d",
+    "namespace": [
+      "logs",
+      "mcp",
+      "client",
+      "resource_read",
+      "domain_docs"
+    ],
+    "score": 0.2795064449310303,
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "resource_re
+[2026-06-17 09:02:31] [ANALYSIS_AGENT] [INFO] calculate_token_trends called
+[2026-06-17 09:02:31] [ANALYSIS_AGENT] [INFO] generate_performance_chart | chart_type=tokens | save=True
+[2026-06-17 09:02:31] [ANALYSIS_AGENT] [INFO] calculate_token_trends: total=1206 mean=1206.0
+[2026-06-17 09:02:31] [ANALYSIS_AGENT] [ERROR] generate_performance_chart error: Expecting value: line 1 column 1 (char 0)
+[2026-06-17 09:02:31] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_token_trends]
+{
+  "status": "ok",
+  "total_sampling_requests": 1,
+  "total_tokens": 1206,
+  "mean_tokens_per_request": 1206.0,
+  "p95_tokens": 1206.0,
+  "per_session_totals": {
+    "661ec992-8756-436c-b89f-6eb0c514a66f": 1206
+  },
+  "points": [
+    {
+      "timestamp": 1781679127.5717237,
+      "token_count": 120
+[2026-06-17 09:02:31] [ANALYSIS_AGENT] [INFO] [TOOL OBS — generate_performance_chart]
+{"status": "error", "message": "Expecting value: line 1 column 1 (char 0)"}
+[2026-06-17 09:03:24] [ANALYSIS_AGENT] [INFO] generate_performance_chart | chart_type=tokens | save=True
+[2026-06-17 09:03:24] [ANALYSIS_AGENT] [INFO] calculate_token_trends called
+[2026-06-17 09:03:24] [ANALYSIS_AGENT] [INFO] calculate_token_trends: total=1206 mean=1206.0
+[2026-06-17 09:03:24] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_token_trends]
+{
+  "status": "ok",
+  "total_sampling_requests": 1,
+  "total_tokens": 1206,
+  "mean_tokens_per_request": 1206.0,
+  "p95_tokens": 1206.0,
+  "per_session_totals": {
+    "661ec992-8756-436c-b89f-6eb0c514a66f": 1206
+  },
+  "points": [
+    {
+      "timestamp": 1781679127.5717237,
+      "token_count": 120
+[2026-06-17 09:03:24] [ANALYSIS_AGENT] [INFO] Chart saved to charts\tokens_20260617_090324.png
+[2026-06-17 09:03:24] [ANALYSIS_AGENT] [INFO] [TOOL OBS — generate_performance_chart]
+{
+  "status": "ok",
+  "chart_type": "tokens",
+  "description": "Token chart: 1 sessions plotted",
+  "chart_path": "charts\\tokens_20260617_090324.png",
+  "has_image": true,
+  "image_base64": "iVBORw0KGgoAAAANSUhEUgAAAxAAAAHkCAYAAACuZcnbAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjEwLjksIGh0dHBz
+[2026-06-17 09:03:26] [ANALYSIS_AGENT] [ERROR] Agent execution failed: Error code: 413 - {'error': {'message': 'Request too large for model `llama-3.3-70b-versatile` in organization `org_01kv5f7qfaew49rptz6m1fkjgj` service tier `on_demand` on tokens per minute (TPM): Limit 12000, Requested 30428, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+Traceback (most recent call last):
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 244, in run_analysis_query
+    async for event in agent.astream({"messages": [HumanMessage(content=query)]}):
+    ...<23 lines>...
+                    final_answer = str(msg.content)
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3407, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 706, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 733, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        step.ainvoke(input, config, **kwargs), context=context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 501, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1378, in amodel_node
+    model_response = await _execute_model_async(request)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1350, in _execute_model_async
+    output = await model_.ainvoke(messages)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5894, in ainvoke
+    return await self.bound.ainvoke(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 497, in ainvoke
+    llm_result = await self.agenerate_prompt(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1834, in agenerate_prompt
+    return await self.agenerate(
+           ^^^^^^^^^^^^^^^^^^^^^
+        prompt_messages, stop=stop, callbacks=callbacks, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1792, in agenerate
+    raise exceptions[0]
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 2127, in _agenerate_with_cache
+    result = await self._agenerate(
+             ^^^^^^^^^^^^^^^^^^^^^^
+        messages, stop=stop, run_manager=run_manager, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_groq\chat_models.py", line 648, in _agenerate
+    response = await self.async_client.create(messages=message_dicts, **params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\resources\chat\completions.py", line 941, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...<47 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\_base_client.py", line 1762, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\_base_client.py", line 1576, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.APIStatusError: Error code: 413 - {'error': {'message': 'Request too large for model `llama-3.3-70b-versatile` in organization `org_01kv5f7qfaew49rptz6m1fkjgj` service tier `on_demand` on tokens per minute (TPM): Limit 12000, Requested 30428, please reduce your message size and try again. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+During task with name 'model' and id '9e205e2e-c0eb-7685-0d21-f2e760a6c74a'
+[2026-06-17 09:03:26] [DASHBOARD] [INFO] Query completed in 83.3s
+[2026-06-17 09:13:43] [ANALYSIS_AGENT] [INFO] Trying Neo4j connection: neo4j+ssc://315b1756.databases.neo4j.io…
+[2026-06-17 09:13:46] [ANALYSIS_AGENT] [INFO] Available databases: ['315b1756', 'system', 'system', 'system']
+[2026-06-17 09:13:46] [ANALYSIS_AGENT] [INFO] Neo4j connected — database: '315b1756' via neo4j+ssc://315b1756.databases.neo4j.io
+[2026-06-17 09:13:46] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 09:13:46] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 09:13:46] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 09:13:46] [ANALYSIS_AGENT] [INFO] Neo4j schema ensured on database '315b1756'
+[2026-06-17 09:13:46] [DASHBOARD] [INFO] Neo4j schema ensured.
+[2026-06-17 09:13:46] [ANALYSIS_AGENT] [INFO] Using Groq LLM: llama-3.3-70b-versatile
+[2026-06-17 09:13:48] [ANALYSIS_AGENT] [INFO] Building analysis agent with 10 tools: ['search_logs_semantic', 'list_recent_logs', 'get_session_trace', 'project_session_to_graph', 'query_knowledge_graph', 'get_graph_summary', 'calculate_latency_trends', 'calculate_token_trends', 'calculate_error_frequency', 'generate_performance_chart']
+[2026-06-17 09:13:48] [ANALYSIS_AGENT] [INFO] Analysis agent ready.
+[2026-06-17 09:13:48] [DASHBOARD] [INFO] Dashboard query: Analyse token consumption patterns from sampling_request logs and generate a tokens chart.
+[2026-06-17 09:13:48] [ANALYSIS_AGENT] [INFO] Analysis query: Analyse token consumption patterns from sampling_request logs and generate a tokens chart.
+[2026-06-17 09:13:52] [ANALYSIS_AGENT] [INFO] search_logs_semantic | query='sampling_request token consumption' | prefix='logs'
+[2026-06-17 09:13:52] [ANALYSIS_AGENT] [INFO] calculate_token_trends called
+[2026-06-17 09:13:52] [ANALYSIS_AGENT] [INFO] generate_performance_chart | chart_type=tokens | save=False
+[2026-06-17 09:13:52] [ANALYSIS_AGENT] [ERROR] generate_performance_chart error: Expecting value: line 1 column 1 (char 0)
+[2026-06-17 09:14:02] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_token_trends]
+{"status": "no_data", "message": "No token_count values found. Ensure logs contain sampling_request entries with token_count or response_length in their metadata."}
+[2026-06-17 09:14:02] [ANALYSIS_AGENT] [INFO] AsyncSqliteStore initialised: mcp_agent_log.db
+[2026-06-17 09:14:02] [ANALYSIS_AGENT] [INFO] search_logs_semantic returned 15 results
+[2026-06-17 09:14:02] [ANALYSIS_AGENT] [INFO] [TOOL OBS — generate_performance_chart]
+{"status": "error", "message": "Expecting value: line 1 column 1 (char 0)"}
+[2026-06-17 09:14:02] [ANALYSIS_AGENT] [INFO] [TOOL OBS — search_logs_semantic]
+[
+  {
+    "key": "fadd6681-56d0-4a68-b652-4db3923e597d",
+    "namespace": [
+      "logs",
+      "mcp",
+      "client",
+      "resource_read",
+      "domain_docs"
+    ],
+    "score": 0.2795064449310303,
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "resource_re
+[2026-06-17 09:14:09] [ANALYSIS_AGENT] [INFO] generate_performance_chart | chart_type=tokens | save=False
+[2026-06-17 09:14:09] [ANALYSIS_AGENT] [INFO] calculate_token_trends called
+[2026-06-17 09:14:09] [ANALYSIS_AGENT] [ERROR] generate_performance_chart error: Expecting value: line 1 column 1 (char 0)
+[2026-06-17 09:14:09] [ANALYSIS_AGENT] [INFO] calculate_token_trends: total=1206 mean=1206.0
+[2026-06-17 09:14:09] [ANALYSIS_AGENT] [INFO] [TOOL OBS — generate_performance_chart]
+{"status": "error", "message": "Expecting value: line 1 column 1 (char 0)"}
+[2026-06-17 09:14:09] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_token_trends]
+{
+  "status": "ok",
+  "total_sampling_requests": 1,
+  "total_tokens": 1206,
+  "mean_tokens_per_request": 1206.0,
+  "p95_tokens": 1206.0,
+  "per_session_totals": {
+    "661ec992-8756-436c-b89f-6eb0c514a66f": 1206
+  },
+  "points": [
+    {
+      "timestamp": 1781679127.5717237,
+      "token_count": 120
+[2026-06-17 09:14:53] [ANALYSIS_AGENT] [INFO] calculate_token_trends called
+[2026-06-17 09:14:53] [ANALYSIS_AGENT] [INFO] calculate_token_trends: total=1206 mean=1206.0
+[2026-06-17 09:14:53] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_token_trends]
+{
+  "status": "ok",
+  "total_sampling_requests": 1,
+  "total_tokens": 1206,
+  "mean_tokens_per_request": 1206.0,
+  "p95_tokens": 1206.0,
+  "per_session_totals": {
+    "661ec992-8756-436c-b89f-6eb0c514a66f": 1206
+  },
+  "points": [
+    {
+      "timestamp": 1781679127.5717237,
+      "token_count": 120
+[2026-06-17 09:15:48] [ANALYSIS_AGENT] [INFO] generate_performance_chart | chart_type=tokens | save=False
+[2026-06-17 09:15:48] [ANALYSIS_AGENT] [INFO] Chart stored in registry with id: tokens_20260617_091548
+[2026-06-17 09:15:48] [ANALYSIS_AGENT] [INFO] [TOOL OBS — generate_performance_chart]
+{
+  "status": "ok",
+  "chart_type": "tokens",
+  "chart_id": "tokens_20260617_091548",
+  "description": "Token chart: 1 sessions plotted",
+  "chart_path": ""
+}
+[2026-06-17 09:15:48] [ANALYSIS_AGENT] [ERROR] Agent execution failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kv5f7qfaew49rptz6m1fkjgj` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99241, Requested 10906. Please try again in 2h26m7.008s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+Traceback (most recent call last):
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 244, in run_analysis_query
+    async for event in agent.astream({"messages": [HumanMessage(content=query)]}):
+    ...<23 lines>...
+                    final_answer = str(msg.content)
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3407, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 706, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 733, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        step.ainvoke(input, config, **kwargs), context=context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 501, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1378, in amodel_node
+    model_response = await _execute_model_async(request)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1350, in _execute_model_async
+    output = await model_.ainvoke(messages)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5894, in ainvoke
+    return await self.bound.ainvoke(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 497, in ainvoke
+    llm_result = await self.agenerate_prompt(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1834, in agenerate_prompt
+    return await self.agenerate(
+           ^^^^^^^^^^^^^^^^^^^^^
+        prompt_messages, stop=stop, callbacks=callbacks, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1792, in agenerate
+    raise exceptions[0]
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 2127, in _agenerate_with_cache
+    result = await self._agenerate(
+             ^^^^^^^^^^^^^^^^^^^^^^
+        messages, stop=stop, run_manager=run_manager, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_groq\chat_models.py", line 648, in _agenerate
+    response = await self.async_client.create(messages=message_dicts, **params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\resources\chat\completions.py", line 941, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...<47 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\_base_client.py", line 1762, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\_base_client.py", line 1576, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kv5f7qfaew49rptz6m1fkjgj` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99241, Requested 10906. Please try again in 2h26m7.008s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+During task with name 'model' and id 'e31ca4b4-b272-d6ca-6dd3-f75391b016b5'
+[2026-06-17 09:15:48] [DASHBOARD] [INFO] Query completed in 119.9s
+[2026-06-17 09:24:45] [ANALYSIS_AGENT] [INFO] Trying Neo4j connection: neo4j+ssc://315b1756.databases.neo4j.io…
+[2026-06-17 09:24:54] [ANALYSIS_AGENT] [INFO] Available databases: ['315b1756', 'system', 'system', 'system']
+[2026-06-17 09:24:54] [ANALYSIS_AGENT] [INFO] Neo4j connected — database: '315b1756' via neo4j+ssc://315b1756.databases.neo4j.io
+[2026-06-17 09:24:54] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 09:24:54] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 09:24:54] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 09:24:54] [ANALYSIS_AGENT] [INFO] Neo4j schema ensured on database '315b1756'
+[2026-06-17 09:24:54] [DASHBOARD] [INFO] Neo4j schema ensured.
+[2026-06-17 09:24:55] [ANALYSIS_AGENT] [INFO] Using OpenRouter LLM: nvidia/nemotron-3-super-120b-a12b:free
+[2026-06-17 09:24:58] [ANALYSIS_AGENT] [INFO] Building analysis agent with 10 tools: ['search_logs_semantic', 'list_recent_logs', 'get_session_trace', 'project_session_to_graph', 'query_knowledge_graph', 'get_graph_summary', 'calculate_latency_trends', 'calculate_token_trends', 'calculate_error_frequency', 'generate_performance_chart']
+[2026-06-17 09:24:58] [ANALYSIS_AGENT] [INFO] Analysis agent ready.
+[2026-06-17 09:24:58] [DASHBOARD] [INFO] Dashboard query: Please analyse recent logs for me
+[2026-06-17 09:24:58] [ANALYSIS_AGENT] [INFO] Analysis query: Please analyse recent logs for me
+[2026-06-17 09:25:03] [ANALYSIS_AGENT] [INFO] list_recent_logs | prefix='logs' | limit=30
+[2026-06-17 09:25:25] [ANALYSIS_AGENT] [INFO] AsyncSqliteStore initialised: mcp_agent_log.db
+[2026-06-17 09:25:25] [ANALYSIS_AGENT] [INFO] list_recent_logs returned 21 entries
+[2026-06-17 09:25:25] [ANALYSIS_AGENT] [INFO] [TOOL OBS — list_recent_logs]
+[
+  {
+    "key": "b33b909c-1377-49ff-ab29-583157300d35",
+    "namespace": [
+      "logs",
+      "mcp",
+      "sampling",
+      "request"
+    ],
+    "score": null,
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "sampling_request",
+    "component": "mcp.sampling.
+[2026-06-17 09:25:47] [ANALYSIS_AGENT] [INFO] search_logs_semantic | query='error' | prefix='logs'
+[2026-06-17 09:25:47] [ANALYSIS_AGENT] [INFO] search_logs_semantic returned 15 results
+[2026-06-17 09:25:47] [ANALYSIS_AGENT] [INFO] [TOOL OBS — search_logs_semantic]
+[
+  {
+    "key": "e47ec669-67a0-42a1-8657-c9528132bf04",
+    "namespace": [
+      "logs",
+      "mcp",
+      "server",
+      "notification"
+    ],
+    "score": 0.2762237787246704,
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "tool_observation",
+    "component
+[2026-06-17 09:26:14] [ANALYSIS_AGENT] [INFO] get_session_trace | session_id=661ec992-8756-436c-b89f-6eb0c514a66f
+[2026-06-17 09:26:14] [ANALYSIS_AGENT] [INFO] get_session_trace found 21 entries for session 661ec992-8756-436c-b89f-6eb0c514a66f
+[2026-06-17 09:26:14] [ANALYSIS_AGENT] [INFO] [TOOL OBS — get_session_trace]
+[
+  {
+    "key": "65da25aa-0f10-490a-ad10-f591cd11b52e",
+    "namespace": [
+      "logs",
+      "mcp",
+      "client",
+      "discovery"
+    ],
+    "score": 0.35638362169265747,
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "tool_invocation",
+    "component": 
+[2026-06-17 09:26:55] [ANALYSIS_AGENT] [INFO] project_session_to_graph called
+[2026-06-17 09:26:55] [ANALYSIS_AGENT] [ERROR] project_session_to_graph error: Unterminated string starting at: line 1 column 4977 (char 4976)
+[2026-06-17 09:26:55] [ANALYSIS_AGENT] [INFO] [TOOL OBS — project_session_to_graph]
+{"status": "error", "message": "Unterminated string starting at: line 1 column 4977 (char 4976)"}
+[2026-06-17 09:27:39] [ANALYSIS_AGENT] [INFO] project_session_to_graph called
+[2026-06-17 09:27:39] [ANALYSIS_AGENT] [ERROR] project_session_to_graph error: Unterminated string starting at: line 1 column 3607 (char 3606)
+[2026-06-17 09:27:39] [ANALYSIS_AGENT] [INFO] [TOOL OBS — project_session_to_graph]
+{"status": "error", "message": "Unterminated string starting at: line 1 column 3607 (char 3606)"}
+[2026-06-17 09:28:08] [ANALYSIS_AGENT] [INFO] get_session_trace | session_id=661ec992-8756-436c-b89f-6eb0c514a66f
+[2026-06-17 09:28:08] [ANALYSIS_AGENT] [INFO] get_session_trace found 21 entries for session 661ec992-8756-436c-b89f-6eb0c514a66f
+[2026-06-17 09:28:08] [ANALYSIS_AGENT] [INFO] [TOOL OBS — get_session_trace]
+[
+  {
+    "key": "65da25aa-0f10-490a-ad10-f591cd11b52e",
+    "namespace": [
+      "logs",
+      "mcp",
+      "client",
+      "discovery"
+    ],
+    "score": 0.35638362169265747,
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "tool_invocation",
+    "component": 
+[2026-06-17 09:29:09] [ANALYSIS_AGENT] [INFO] project_session_to_graph called
+[2026-06-17 09:29:09] [ANALYSIS_AGENT] [ERROR] project_session_to_graph error: Unterminated string starting at: line 1 column 3607 (char 3606)
+[2026-06-17 09:29:09] [ANALYSIS_AGENT] [INFO] [TOOL OBS — project_session_to_graph]
+{"status": "error", "message": "Unterminated string starting at: line 1 column 3607 (char 3606)"}
+[2026-06-17 09:29:18] [ANALYSIS_AGENT] [INFO] get_session_trace | session_id=661ec992-8756-436c-b89f-6eb0c514a66f
+[2026-06-17 09:29:18] [ANALYSIS_AGENT] [INFO] get_session_trace found 21 entries for session 661ec992-8756-436c-b89f-6eb0c514a66f
+[2026-06-17 09:29:18] [ANALYSIS_AGENT] [INFO] [TOOL OBS — get_session_trace]
+[
+  {
+    "key": "65da25aa-0f10-490a-ad10-f591cd11b52e",
+    "namespace": [
+      "logs",
+      "mcp",
+      "client",
+      "discovery"
+    ],
+    "score": 0.35638362169265747,
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "tool_invocation",
+    "component": 
+[2026-06-17 09:29:37] [ANALYSIS_AGENT] [INFO] get_session_trace | session_id=661ec992-8756-436c-b89f-6eb0c514a66f
+[2026-06-17 09:29:37] [ANALYSIS_AGENT] [INFO] get_session_trace found 21 entries for session 661ec992-8756-436c-b89f-6eb0c514a66f
+[2026-06-17 09:29:37] [ANALYSIS_AGENT] [INFO] [TOOL OBS — get_session_trace]
+[
+  {
+    "key": "65da25aa-0f10-490a-ad10-f591cd11b52e",
+    "namespace": [
+      "logs",
+      "mcp",
+      "client",
+      "discovery"
+    ],
+    "score": 0.35638362169265747,
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "tool_invocation",
+    "component": 
+[2026-06-17 09:30:00] [ANALYSIS_AGENT] [INFO] get_session_trace | session_id=661ec992-8756-436c-b89f-6eb0c514a66f
+[2026-06-17 09:30:00] [ANALYSIS_AGENT] [INFO] get_session_trace found 21 entries for session 661ec992-8756-436c-b89f-6eb0c514a66f
+[2026-06-17 09:30:00] [ANALYSIS_AGENT] [INFO] [TOOL OBS — get_session_trace]
+[
+  {
+    "key": "65da25aa-0f10-490a-ad10-f591cd11b52e",
+    "namespace": [
+      "logs",
+      "mcp",
+      "client",
+      "discovery"
+    ],
+    "score": 0.35638362169265747,
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "tool_invocation",
+    "component": 
+[2026-06-17 09:31:07] [ANALYSIS_AGENT] [ERROR] Agent execution failed: cannot schedule new futures after shutdown
+Traceback (most recent call last):
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 244, in run_analysis_query
+    async for event in agent.astream({"messages": [HumanMessage(content=query)]}):
+    ...<23 lines>...
+                    final_answer = str(msg.content)
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3407, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 706, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 733, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        step.ainvoke(input, config, **kwargs), context=context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 501, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1378, in amodel_node
+    model_response = await _execute_model_async(request)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1350, in _execute_model_async
+    output = await model_.ainvoke(messages)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5894, in ainvoke
+    return await self.bound.ainvoke(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 497, in ainvoke
+    llm_result = await self.agenerate_prompt(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1834, in agenerate_prompt
+    return await self.agenerate(
+           ^^^^^^^^^^^^^^^^^^^^^
+        prompt_messages, stop=stop, callbacks=callbacks, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1792, in agenerate
+    raise exceptions[0]
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 2127, in _agenerate_with_cache
+    result = await self._agenerate(
+             ^^^^^^^^^^^^^^^^^^^^^^
+        messages, stop=stop, run_manager=run_manager, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_openai\chat_models\base.py", line 1948, in _agenerate
+    return await run_in_executor(
+           ^^^^^^^^^^^^^^^^^^^^^^
+        None, self._create_chat_result, response, generation_info
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\runnables\config.py", line 667, in run_in_executor
+    return await asyncio.get_running_loop().run_in_executor(
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        None,
+        ^^^^^
+        cast("Callable[..., T]", partial(copy_context().run, wrapper)),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 901, in run_in_executor
+    executor.submit(func, *args), loop=self)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Python313\Lib\concurrent\futures\thread.py", line 171, in submit
+    raise RuntimeError('cannot schedule new futures after shutdown')
+RuntimeError: cannot schedule new futures after shutdown
+During task with name 'model' and id '4dbb153b-2155-12ba-b7a8-0c64d346e4a1'
+[2026-06-17 09:31:07] [DASHBOARD] [INFO] Query completed in 369.4s
+[2026-06-17 11:15:34] [DASHBOARD] [ERROR] Agent init failed: cannot import name 'create_react_agent' from 'langchain.agents' (C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\__init__.py)
+[2026-06-17 11:48:03] [ANALYSIS_AGENT] [INFO] Trying Neo4j connection: neo4j+ssc://315b1756.databases.neo4j.io…
+[2026-06-17 11:48:06] [ANALYSIS_AGENT] [INFO] Available databases: ['315b1756', 'system', 'system', 'system']
+[2026-06-17 11:48:06] [ANALYSIS_AGENT] [INFO] Neo4j connected — database: '315b1756' via neo4j+ssc://315b1756.databases.neo4j.io
+[2026-06-17 11:48:06] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 11:48:06] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 11:48:07] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 11:48:07] [ANALYSIS_AGENT] [INFO] Neo4j schema ensured on database '315b1756'
+[2026-06-17 11:48:07] [DASHBOARD] [INFO] Neo4j schema ensured.
+[2026-06-17 11:48:07] [ANALYSIS_AGENT] [INFO] Using OpenRouter LLM: nvidia/nemotron-3-super-120b-a12b:free
+[2026-06-17 11:48:10] [ANALYSIS_AGENT] [INFO] Building analysis agent with 10 tools: ['search_logs_semantic', 'list_recent_logs', 'get_session_trace', 'project_session_to_graph', 'query_knowledge_graph', 'get_graph_summary', 'calculate_latency_trends', 'calculate_token_trends', 'calculate_error_frequency', 'generate_performance_chart']
+[2026-06-17 11:48:10] [ANALYSIS_AGENT] [INFO] Analysis agent ready.
+[2026-06-17 11:48:10] [DASHBOARD] [INFO] Dashboard query: please analyse recent logs for me
+[2026-06-17 11:48:10] [ANALYSIS_AGENT] [INFO] Analysis query: please analyse recent logs for me
+[2026-06-17 11:48:13] [ANALYSIS_AGENT] [INFO] list_recent_logs | prefix='logs' | limit=30
+[2026-06-17 11:48:25] [ANALYSIS_AGENT] [INFO] AsyncSqliteStore initialised: mcp_agent_log.db
+[2026-06-17 11:48:25] [ANALYSIS_AGENT] [INFO] list_recent_logs returned 21 entries
+[2026-06-17 11:49:15] [ANALYSIS_AGENT] [INFO] calculate_latency_trends called | window=3
+[2026-06-17 11:49:23] [ANALYSIS_AGENT] [INFO] list_recent_logs | prefix='logs' | limit=30
+[2026-06-17 11:49:23] [ANALYSIS_AGENT] [INFO] list_recent_logs returned 21 entries
+[2026-06-17 11:49:52] [ANALYSIS_AGENT] [INFO] calculate_latency_trends called | window=3
+[2026-06-17 11:50:26] [ANALYSIS_AGENT] [INFO] calculate_token_trends called
+[2026-06-17 11:50:47] [ANALYSIS_AGENT] [INFO] list_recent_logs | prefix='logs' | limit=30
+[2026-06-17 11:50:47] [ANALYSIS_AGENT] [INFO] list_recent_logs returned 21 entries
+[2026-06-17 11:51:38] [ANALYSIS_AGENT] [INFO] calculate_latency_trends called | window=3
+[2026-06-17 11:51:57] [ANALYSIS_AGENT] [ERROR] Agent execution failed: Recursion limit of 15 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.
+For troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT
+Traceback (most recent call last):
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 263, in run_analysis_query
+    result = await agent.ainvoke(
+             ^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\main.py", line 4057, in ainvoke
+    async for chunk in self.astream(
+    ...<30 lines>...
+            chunks.append(chunk)
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3459, in astream
+    raise GraphRecursionError(msg)
+langgraph.errors.GraphRecursionError: Recursion limit of 15 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.
+For troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT
+[2026-06-17 11:51:57] [DASHBOARD] [INFO] Query completed in 226.7s
+[2026-06-17 11:52:27] [DASHBOARD] [INFO] Dashboard query: Analyse token consumption patterns from sampling_request logs and generate a tokens chart.
+[2026-06-17 11:52:27] [ANALYSIS_AGENT] [INFO] Analysis query: Analyse token consumption patterns from sampling_request logs and generate a tokens chart.
+[2026-06-17 11:52:34] [ANALYSIS_AGENT] [INFO] search_logs_semantic | query='sampling_request token' | prefix='logs'
+[2026-06-17 11:52:34] [ANALYSIS_AGENT] [INFO] search_logs_semantic returned 15 results
+[2026-06-17 11:53:01] [ANALYSIS_AGENT] [INFO] calculate_token_trends called
+[2026-06-17 11:53:12] [ANALYSIS_AGENT] [INFO] search_logs_semantic | query='sampling_request' | prefix='logs'
+[2026-06-17 11:53:12] [ANALYSIS_AGENT] [INFO] search_logs_semantic returned 21 results
+[2026-06-17 11:53:25] [ANALYSIS_AGENT] [INFO] search_logs_semantic | query='token_count' | prefix='logs'
+[2026-06-17 11:53:25] [ANALYSIS_AGENT] [INFO] search_logs_semantic returned 15 results
+[2026-06-17 11:53:48] [ANALYSIS_AGENT] [INFO] calculate_token_trends called
+[2026-06-17 11:53:50] [ANALYSIS_AGENT] [INFO] search_logs_semantic | query='token_count' | prefix='logs'
+[2026-06-17 11:53:50] [ANALYSIS_AGENT] [INFO] search_logs_semantic returned 15 results
+[2026-06-17 11:53:58] [ANALYSIS_AGENT] [INFO] list_recent_logs | prefix='logs' | limit=100
+[2026-06-17 11:53:58] [ANALYSIS_AGENT] [INFO] list_recent_logs returned 21 entries
+[2026-06-17 11:54:45] [ANALYSIS_AGENT] [ERROR] Agent execution failed: Recursion limit of 15 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.
+For troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT
+Traceback (most recent call last):
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 263, in run_analysis_query
+    result = await agent.ainvoke(
+             ^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\main.py", line 4057, in ainvoke
+    async for chunk in self.astream(
+    ...<30 lines>...
+            chunks.append(chunk)
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3459, in astream
+    raise GraphRecursionError(msg)
+langgraph.errors.GraphRecursionError: Recursion limit of 15 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.
+For troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT
+[2026-06-17 11:54:45] [DASHBOARD] [INFO] Query completed in 137.5s
+[2026-06-17 12:09:55] [ANALYSIS_AGENT] [INFO] Trying Neo4j connection: neo4j+ssc://315b1756.databases.neo4j.io…
+[2026-06-17 12:10:00] [ANALYSIS_AGENT] [INFO] Available databases: ['315b1756', 'system', 'system', 'system']
+[2026-06-17 12:10:00] [ANALYSIS_AGENT] [INFO] Neo4j connected — database: '315b1756' via neo4j+ssc://315b1756.databases.neo4j.io
+[2026-06-17 12:10:00] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 12:10:01] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 12:10:01] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 12:10:01] [ANALYSIS_AGENT] [INFO] Neo4j schema ensured on database '315b1756'
+[2026-06-17 12:10:01] [DASHBOARD] [INFO] Neo4j schema ensured.
+[2026-06-17 12:10:01] [ANALYSIS_AGENT] [INFO] Using Groq LLM: llama-3.3-70b-versatile
+[2026-06-17 12:10:03] [ANALYSIS_AGENT] [INFO] Building analysis agent with 10 tools: ['search_logs_semantic', 'list_recent_logs', 'get_session_trace', 'project_session_to_graph', 'query_knowledge_graph', 'get_graph_summary', 'calculate_latency_trends', 'calculate_token_trends', 'calculate_error_frequency', 'generate_performance_chart']
+[2026-06-17 12:10:03] [ANALYSIS_AGENT] [INFO] Analysis agent ready.
+[2026-06-17 12:10:03] [DASHBOARD] [INFO] Dashboard query: Analyse token consumption patterns from sampling_request logs and generate a tokens chart.
+[2026-06-17 12:10:03] [ANALYSIS_AGENT] [INFO] Analysis query: Analyse token consumption patterns from sampling_request logs and generate a tokens chart.
+[2026-06-17 12:10:17] [ANALYSIS_AGENT] [INFO] search_logs_semantic | query='sampling_request token consumption' | prefix='logs'
+[2026-06-17 12:10:17] [ANALYSIS_AGENT] [INFO] calculate_token_trends called
+[2026-06-17 12:10:17] [ANALYSIS_AGENT] [INFO] generate_performance_chart | chart_type=tokens | save=False
+[2026-06-17 12:10:17] [ANALYSIS_AGENT] [ERROR] generate_performance_chart error: Expecting value: line 1 column 1 (char 0)
+[2026-06-17 12:10:31] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_token_trends]
+{"status": "no_data", "message": "No token_count values found. Ensure logs contain sampling_request entries with token_count or response_length in their metadata."}
+[2026-06-17 12:10:31] [ANALYSIS_AGENT] [INFO] AsyncSqliteStore initialised: mcp_agent_log.db
+[2026-06-17 12:10:31] [ANALYSIS_AGENT] [INFO] search_logs_semantic returned 21 results
+[2026-06-17 12:10:31] [ANALYSIS_AGENT] [INFO] [TOOL OBS — generate_performance_chart]
+{"status": "error", "message": "Expecting value: line 1 column 1 (char 0)"}
+[2026-06-17 12:10:31] [ANALYSIS_AGENT] [INFO] [TOOL OBS — search_logs_semantic]
+[
+  {
+    "key": "fadd6681-56d0-4a68-b652-4db3923e597d",
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "resource_read",
+    "component": "mcp.client.resource_read.domain_docs",
+    "content": "Resource read request: current debates open-source vs closed-source
+[2026-06-17 12:10:35] [ANALYSIS_AGENT] [ERROR] Agent execution failed: Error code: 400 - {'error': {'message': "Failed to call a function. Please adjust your prompt. See 'failed_generation' for more details.", 'type': 'invalid_request_error', 'code': 'tool_use_failed', 'failed_generation': '<function=calculate_token_trends>{"logs_json": "[{\\"key\\": \\"fadd6681-56d0-4a68-b652-4db3923e597d\\", \\"session_id\\": \\"661ec992-8756-436c-b89f-6eb0c514a66f\\", \\"mcp_interaction_type\\": \\"resource_read\\", \\"component\\": \\"mcp.client.resource_read.domain_docs\\", \\"content\\": \\"Resource read request: current debates open-source vs closed-source AI trade-offs long-term AI safety\\", \\"timestamp\\": 1781679101.3646445, \\"metadata\\": {}}, {\\"key\\": \\"d6f70ee4-b738-437f-96ab-cebc81d806ee\\", \\"session_id\\": \\"661ec992-8756-436c-b89f-6eb0c514a66f\\", \\"mcp_interaction_type\\": \\"tool_observation\\", \\"component\\": \\"mcp.server.notification\\", \\"content\\": \\"CRAG resource invoked for query: \'current debates open-source vs closed-source AI trade-offs long-term AI safety\'\\", \\"timestamp\\": 1781679102.533745, \\"metadata\\": {\\"level\\": \\"info\\"}}, {\\"key\\": \\"d833632d-227d-42ea-8699-97b63901567c\\", \\"session_id\\": \\"661ec992-8756-436c-b89f-6eb0c514a66f\\", \\"mcp_interaction_type\\": \\"tool_observation\\", \\"component\\": \\"mcp.server.notification\\", \\"content\\": \\"Running critic evaluation via MCP Sampling...\\", \\"timestamp\\": 1781679155.1075041, \\"metadata\\": {\\"level\\": \\"info\\"}}, {\\"key\\": \\"2b4ea66e-17bc-4450-aa7c-df4ebd1dfaea\\", \\"session_id\\": \\"661ec992-8756-436c-b89f-6eb0c514a66f\\", \\"mcp_interaction_type\\": \\"agent_action\\", \\"component\\": \\"agent.planning.query_received\\", \\"content\\": \\"User query: What are the current debates around open-source vs closed-source AI? Evaluate the trade-offs and recommend which approach is better for long-term AI safety.\\", \\"timestamp\\": 1781679097.8583913, \\"metadata\\": {}}, {\\"key\\": \\"65da25aa-0f10-490a-ad10-f591cd11b52e\\", \\"session_id\\": \\"661ec992-8756-436c-b89f-6eb0c514a66f\\", \\"mcp_interaction_type\\": \\"tool_invocation\\", \\"component\\": \\"mcp.client.discovery\\", \\"content\\": \\"Connected to MCP server. Tools: [\'reflect_and_correct\']\\", \\"timestamp\\": 1781679082.811244, \\"metadata\\": {}}, {\\"key\\": \\"2af4bb1e-f67b-4648-b340-3e06068641cf\\", \\"session_id\\": \\"661ec992-8756-436c-b89f-6eb0c514a66f\\", \\"mcp_interaction_type\\": \\"tool_observation\\", \\"component\\": \\"mcp.server.notification\\", \\"content\\": \\"ToT evaluation complete \\u2014 kept 6/6 chunks\\", \\"timestamp\\": 1781679127.9095938, \\"metadata\\": {\\"level\\": \\"info\\"}}, {\\"key\\": \\"b6ee25be-1b8e-4f1d-8d28-3e6a6e3209e1\\", \\"session_id\\": \\"661ec992-8756-436c-b89f-6eb0c514a66f\\", \\"mcp_interaction_type\\": \\"tool_observation\\", \\"component\\": \\"mcp.server.notification\\", \\"content\\": \\"Step 2 complete \\u2014 6 chunks passed ToT | fallback_needed=False\\", \\"timestamp\\": 1781679127.9646168, \\"metadata\\": {\\"level\\": \\"info\\"}}, {\\"key\\": \\"5a73038b-e5a6-4a24-87fd-edbf8a5e1bbd\\", \\"session_id\\": \\"661ec992-8756-436c-b89f-6eb0c514a66f\\", \\"mcp_interaction_type\\": \\"tool_observation\\", \\"component\\": \\"mcp.server.notification\\", \\"content\\": \\"Step 1 complete \\u2014 hierarchical retrieval found 6 chunks.\\", \\"timestamp\\": 1781679102.6348627, \\"metadata\\": {\\"level\\": \\"info\\"}}, {\\"key\\": \\"e47ec669-67a0-42a1-8657-c9528132bf04\\", \\"session_id\\": \\"661ec992-8756-436c-b89f-6eb0c514a66f'}}
+Traceback (most recent call last):
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 270, in run_analysis_query
+    async for event in agent.astream(
+    ...<41 lines>...
+                        final_answer = content
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3407, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 706, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 733, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        step.ainvoke(input, config, **kwargs), context=context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 501, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1378, in amodel_node
+    model_response = await _execute_model_async(request)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1350, in _execute_model_async
+    output = await model_.ainvoke(messages)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5894, in ainvoke
+    return await self.bound.ainvoke(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 497, in ainvoke
+    llm_result = await self.agenerate_prompt(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1834, in agenerate_prompt
+    return await self.agenerate(
+           ^^^^^^^^^^^^^^^^^^^^^
+        prompt_messages, stop=stop, callbacks=callbacks, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1792, in agenerate
+    raise exceptions[0]
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 2127, in _agenerate_with_cache
+    result = await self._agenerate(
+             ^^^^^^^^^^^^^^^^^^^^^^
+        messages, stop=stop, run_manager=run_manager, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_groq\chat_models.py", line 648, in _agenerate
+    response = await self.async_client.create(messages=message_dicts, **params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\resources\chat\completions.py", line 941, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...<47 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\_base_client.py", line 1762, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\_base_client.py", line 1576, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.BadRequestError: Error code: 400 - {'error': {'message': "Failed to call a function. Please adjust your prompt. See 'failed_generation' for more details.", 'type': 'invalid_request_error', 'code': 'tool_use_failed', 'failed_generation': '<function=calculate_token_trends>{"logs_json": "[{\\"key\\": \\"fadd6681-56d0-4a68-b652-4db3923e597d\\", \\"session_id\\": \\"661ec992-8756-436c-b89f-6eb0c514a66f\\", \\"mcp_interaction_type\\": \\"resource_read\\", \\"component\\": \\"mcp.client.resource_read.domain_docs\\", \\"content\\": \\"Resource read request: current debates open-source vs closed-source AI trade-offs long-term AI safety\\", \\"timestamp\\": 1781679101.3646445, \\"metadata\\": {}}, {\\"key\\": \\"d6f70ee4-b738-437f-96ab-cebc81d806ee\\", \\"session_id\\": \\"661ec992-8756-436c-b89f-6eb0c514a66f\\", \\"mcp_interaction_type\\": \\"tool_observation\\", \\"component\\": \\"mcp.server.notification\\", \\"content\\": \\"CRAG resource invoked for query: \'current debates open-source vs closed-source AI trade-offs long-term AI safety\'\\", \\"timestamp\\": 1781679102.533745, \\"metadata\\": {\\"level\\": \\"info\\"}}, {\\"key\\": \\"d833632d-227d-42ea-8699-97b63901567c\\", \\"session_id\\": \\"661ec992-8756-436c-b89f-6eb0c514a66f\\", \\"mcp_interaction_type\\": \\"tool_observation\\", \\"component\\": \\"mcp.server.notification\\", \\"content\\": \\"Running critic evaluation via MCP Sampling...\\", \\"timestamp\\": 1781679155.1075041, \\"metadata\\": {\\"level\\": \\"info\\"}}, {\\"key\\": \\"2b4ea66e-17bc-4450-aa7c-df4ebd1dfaea\\", \\"session_id\\": \\"661ec992-8756-436c-b89f-6eb0c514a66f\\", \\"mcp_interaction_type\\": \\"agent_action\\", \\"component\\": \\"agent.planning.query_received\\", \\"content\\": \\"User query: What are the current debates around open-source vs closed-source AI? Evaluate the trade-offs and recommend which approach is better for long-term AI safety.\\", \\"timestamp\\": 1781679097.8583913, \\"metadata\\": {}}, {\\"key\\": \\"65da25aa-0f10-490a-ad10-f591cd11b52e\\", \\"session_id\\": \\"661ec992-8756-436c-b89f-6eb0c514a66f\\", \\"mcp_interaction_type\\": \\"tool_invocation\\", \\"component\\": \\"mcp.client.discovery\\", \\"content\\": \\"Connected to MCP server. Tools: [\'reflect_and_correct\']\\", \\"timestamp\\": 1781679082.811244, \\"metadata\\": {}}, {\\"key\\": \\"2af4bb1e-f67b-4648-b340-3e06068641cf\\", \\"session_id\\": \\"661ec992-8756-436c-b89f-6eb0c514a66f\\", \\"mcp_interaction_type\\": \\"tool_observation\\", \\"component\\": \\"mcp.server.notification\\", \\"content\\": \\"ToT evaluation complete \\u2014 kept 6/6 chunks\\", \\"timestamp\\": 1781679127.9095938, \\"metadata\\": {\\"level\\": \\"info\\"}}, {\\"key\\": \\"b6ee25be-1b8e-4f1d-8d28-3e6a6e3209e1\\", \\"session_id\\": \\"661ec992-8756-436c-b89f-6eb0c514a66f\\", \\"mcp_interaction_type\\": \\"tool_observation\\", \\"component\\": \\"mcp.server.notification\\", \\"content\\": \\"Step 2 complete \\u2014 6 chunks passed ToT | fallback_needed=False\\", \\"timestamp\\": 1781679127.9646168, \\"metadata\\": {\\"level\\": \\"info\\"}}, {\\"key\\": \\"5a73038b-e5a6-4a24-87fd-edbf8a5e1bbd\\", \\"session_id\\": \\"661ec992-8756-436c-b89f-6eb0c514a66f\\", \\"mcp_interaction_type\\": \\"tool_observation\\", \\"component\\": \\"mcp.server.notification\\", \\"content\\": \\"Step 1 complete \\u2014 hierarchical retrieval found 6 chunks.\\", \\"timestamp\\": 1781679102.6348627, \\"metadata\\": {\\"level\\": \\"info\\"}}, {\\"key\\": \\"e47ec669-67a0-42a1-8657-c9528132bf04\\", \\"session_id\\": \\"661ec992-8756-436c-b89f-6eb0c514a66f'}}
+During task with name 'model' and id 'b648ac69-717f-b242-a5c5-e2169c966b42'
+[2026-06-17 12:10:35] [ANALYSIS_AGENT] [INFO] Analysis query complete. Steps: 3
+[2026-06-17 12:10:35] [DASHBOARD] [INFO] Query completed in 31.9s
+[2026-06-17 12:24:07] [ANALYSIS_AGENT] [INFO] Trying Neo4j connection: neo4j+ssc://315b1756.databases.neo4j.io…
+[2026-06-17 12:24:12] [ANALYSIS_AGENT] [INFO] Available databases: ['315b1756', 'system', 'system', 'system']
+[2026-06-17 12:24:12] [ANALYSIS_AGENT] [INFO] Neo4j connected — database: '315b1756' via neo4j+ssc://315b1756.databases.neo4j.io
+[2026-06-17 12:24:12] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 12:24:12] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 12:24:12] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 12:24:12] [ANALYSIS_AGENT] [INFO] Neo4j schema ensured on database '315b1756'
+[2026-06-17 12:24:12] [DASHBOARD] [INFO] Neo4j schema ensured.
+[2026-06-17 12:24:12] [ANALYSIS_AGENT] [INFO] Using Groq LLM: llama-3.3-70b-versatile
+[2026-06-17 12:24:15] [ANALYSIS_AGENT] [INFO] Building analysis agent with 10 tools: ['search_logs_semantic', 'list_recent_logs', 'get_session_trace', 'project_session_to_graph', 'query_knowledge_graph', 'get_graph_summary', 'calculate_latency_trends', 'calculate_token_trends', 'calculate_error_frequency', 'generate_performance_chart']
+[2026-06-17 12:24:15] [ANALYSIS_AGENT] [INFO] Analysis agent ready.
+[2026-06-17 12:24:15] [DASHBOARD] [INFO] Dashboard query: Analyse token consumption patterns from sampling_request logs and generate a tokens chart.
+[2026-06-17 12:24:15] [ANALYSIS_AGENT] [INFO] Analysis query: Analyse token consumption patterns from sampling_request logs and generate a tokens chart.
+[2026-06-17 12:24:28] [ANALYSIS_AGENT] [ERROR] Agent execution failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kv5f7qfaew49rptz6m1fkjgj` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 97979, Requested 4653. Please try again in 37m54.048s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+Traceback (most recent call last):
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 363, in run_analysis_query
+    await _run()
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 288, in _run
+    async for event in agent.astream(
+    ...<71 lines>...
+                    final_answer = content
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3407, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 706, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 733, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        step.ainvoke(input, config, **kwargs), context=context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 501, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1378, in amodel_node
+    model_response = await _execute_model_async(request)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1350, in _execute_model_async
+    output = await model_.ainvoke(messages)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5894, in ainvoke
+    return await self.bound.ainvoke(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 497, in ainvoke
+    llm_result = await self.agenerate_prompt(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1834, in agenerate_prompt
+    return await self.agenerate(
+           ^^^^^^^^^^^^^^^^^^^^^
+        prompt_messages, stop=stop, callbacks=callbacks, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1792, in agenerate
+    raise exceptions[0]
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 2127, in _agenerate_with_cache
+    result = await self._agenerate(
+             ^^^^^^^^^^^^^^^^^^^^^^
+        messages, stop=stop, run_manager=run_manager, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_groq\chat_models.py", line 648, in _agenerate
+    response = await self.async_client.create(messages=message_dicts, **params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\resources\chat\completions.py", line 941, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...<47 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\_base_client.py", line 1762, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\_base_client.py", line 1576, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kv5f7qfaew49rptz6m1fkjgj` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 97979, Requested 4653. Please try again in 37m54.048s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+During task with name 'model' and id '72a76578-a493-8e70-1b5c-b416bf0ae4f0'
+[2026-06-17 12:24:28] [ANALYSIS_AGENT] [INFO] Analysis query complete. Steps: 0 | Answer length: 425
+[2026-06-17 12:24:28] [DASHBOARD] [INFO] Query completed in 12.7s
+[2026-06-17 12:25:24] [ANALYSIS_AGENT] [INFO] Trying Neo4j connection: neo4j+ssc://315b1756.databases.neo4j.io…
+[2026-06-17 12:25:26] [ANALYSIS_AGENT] [INFO] Available databases: ['315b1756', 'system', 'system', 'system']
+[2026-06-17 12:25:26] [ANALYSIS_AGENT] [INFO] Neo4j connected — database: '315b1756' via neo4j+ssc://315b1756.databases.neo4j.io
+[2026-06-17 12:25:27] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 12:25:27] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 12:25:27] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 12:25:27] [ANALYSIS_AGENT] [INFO] Neo4j schema ensured on database '315b1756'
+[2026-06-17 12:25:27] [DASHBOARD] [INFO] Neo4j schema ensured.
+[2026-06-17 12:25:28] [ANALYSIS_AGENT] [INFO] Using OpenRouter LLM: nvidia/nemotron-3-super-120b-a12b:free
+[2026-06-17 12:25:31] [ANALYSIS_AGENT] [INFO] Building analysis agent with 10 tools: ['search_logs_semantic', 'list_recent_logs', 'get_session_trace', 'project_session_to_graph', 'query_knowledge_graph', 'get_graph_summary', 'calculate_latency_trends', 'calculate_token_trends', 'calculate_error_frequency', 'generate_performance_chart']
+[2026-06-17 12:25:31] [ANALYSIS_AGENT] [INFO] Analysis agent ready.
+[2026-06-17 12:25:31] [DASHBOARD] [INFO] Dashboard query: Analyse token consumption patterns from sampling_request logs and generate a tokens chart.
+[2026-06-17 12:25:31] [ANALYSIS_AGENT] [INFO] Analysis query: Analyse token consumption patterns from sampling_request logs and generate a tokens chart.
+[2026-06-17 12:25:39] [ANALYSIS_AGENT] [INFO] [AGENT THOUGHT]
+
+[2026-06-17 12:25:39] [ANALYSIS_AGENT] [INFO] search_logs_semantic | query='sampling_request token consumption' | prefix='logs'
+[2026-06-17 12:25:51] [ANALYSIS_AGENT] [INFO] AsyncSqliteStore initialised: mcp_agent_log.db
+[2026-06-17 12:25:51] [ANALYSIS_AGENT] [INFO] search_logs_semantic returned 21 results
+[2026-06-17 12:25:51] [ANALYSIS_AGENT] [INFO] [TOOL OBS — search_logs_semantic]
+[
+  {
+    "key": "fadd6681-56d0-4a68-b652-4db3923e597d",
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "resource_read",
+    "component": "mcp.client.resource_read.domain_docs",
+    "content": "Resource read request: current debates open-source vs closed-source
+[2026-06-17 12:26:28] [ANALYSIS_AGENT] [INFO] [AGENT THOUGHT]
+
+[2026-06-17 12:26:28] [ANALYSIS_AGENT] [INFO] calculate_token_trends called
+[2026-06-17 12:26:28] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_token_trends]
+{"status": "no_data", "message": "No token_count values found. Ensure logs contain sampling_request entries with token_count or response_length in their metadata."}
+[2026-06-17 12:26:37] [ANALYSIS_AGENT] [INFO] [AGENT THOUGHT]
+
+[2026-06-17 12:26:37] [ANALYSIS_AGENT] [INFO] list_recent_logs | prefix='logs' | limit=50
+[2026-06-17 12:26:37] [ANALYSIS_AGENT] [INFO] list_recent_logs returned 21 entries
+[2026-06-17 12:26:37] [ANALYSIS_AGENT] [INFO] [TOOL OBS — list_recent_logs]
+[
+  {
+    "key": "b33b909c-1377-49ff-ab29-583157300d35",
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "sampling_request",
+    "component": "mcp.sampling.request",
+    "content": "\n                    QUESTION:\n                    What are the current debate
+[2026-06-17 12:26:58] [ANALYSIS_AGENT] [INFO] [AGENT THOUGHT]
+
+[2026-06-17 12:26:58] [ANALYSIS_AGENT] [INFO] calculate_token_trends called
+[2026-06-17 12:26:58] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_token_trends]
+{"status": "no_data", "message": "No token_count values found. Ensure logs contain sampling_request entries with token_count or response_length in their metadata."}
+[2026-06-17 12:27:30] [ANALYSIS_AGENT] [INFO] [AGENT THOUGHT]
+
+[2026-06-17 12:27:30] [ANALYSIS_AGENT] [INFO] search_logs_semantic | query='token_count' | prefix='logs'
+[2026-06-17 12:27:30] [ANALYSIS_AGENT] [INFO] search_logs_semantic returned 20 results
+[2026-06-17 12:27:30] [ANALYSIS_AGENT] [INFO] [TOOL OBS — search_logs_semantic]
+[
+  {
+    "key": "fadd6681-56d0-4a68-b652-4db3923e597d",
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "resource_read",
+    "component": "mcp.client.resource_read.domain_docs",
+    "content": "Resource read request: current debates open-source vs closed-source
+[2026-06-17 12:28:22] [ANALYSIS_AGENT] [ERROR] Agent execution failed: cannot schedule new futures after shutdown
+Traceback (most recent call last):
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 363, in run_analysis_query
+    await _run()
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 288, in _run
+    async for event in agent.astream(
+    ...<71 lines>...
+                    final_answer = content
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3407, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 706, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 733, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        step.ainvoke(input, config, **kwargs), context=context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 501, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1378, in amodel_node
+    model_response = await _execute_model_async(request)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1350, in _execute_model_async
+    output = await model_.ainvoke(messages)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5894, in ainvoke
+    return await self.bound.ainvoke(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 497, in ainvoke
+    llm_result = await self.agenerate_prompt(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1834, in agenerate_prompt
+    return await self.agenerate(
+           ^^^^^^^^^^^^^^^^^^^^^
+        prompt_messages, stop=stop, callbacks=callbacks, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1792, in agenerate
+    raise exceptions[0]
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 2127, in _agenerate_with_cache
+    result = await self._agenerate(
+             ^^^^^^^^^^^^^^^^^^^^^^
+        messages, stop=stop, run_manager=run_manager, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_openai\chat_models\base.py", line 1948, in _agenerate
+    return await run_in_executor(
+           ^^^^^^^^^^^^^^^^^^^^^^
+        None, self._create_chat_result, response, generation_info
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\runnables\config.py", line 667, in run_in_executor
+    return await asyncio.get_running_loop().run_in_executor(
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        None,
+        ^^^^^
+        cast("Callable[..., T]", partial(copy_context().run, wrapper)),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 901, in run_in_executor
+    executor.submit(func, *args), loop=self)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Python313\Lib\concurrent\futures\thread.py", line 171, in submit
+    raise RuntimeError('cannot schedule new futures after shutdown')
+RuntimeError: cannot schedule new futures after shutdown
+During task with name 'model' and id '04fd81ff-069e-1bac-147c-70a3c95cedaa'
+[2026-06-17 12:28:22] [ANALYSIS_AGENT] [INFO] Analysis query complete. Steps: 10 | Answer length: 58
+[2026-06-17 12:28:22] [DASHBOARD] [INFO] Query completed in 170.5s
+[2026-06-17 12:57:15] [ANALYSIS_AGENT] [INFO] Trying Neo4j connection: neo4j+ssc://315b1756.databases.neo4j.io…
+[2026-06-17 12:57:20] [ANALYSIS_AGENT] [INFO] Available databases: ['315b1756', 'system', 'system', 'system']
+[2026-06-17 12:57:20] [ANALYSIS_AGENT] [INFO] Neo4j connected — database: '315b1756' via neo4j+ssc://315b1756.databases.neo4j.io
+[2026-06-17 12:57:20] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 12:57:20] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 12:57:20] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 12:57:20] [ANALYSIS_AGENT] [INFO] Neo4j schema ensured on database '315b1756'
+[2026-06-17 12:57:20] [DASHBOARD] [INFO] Neo4j schema ensured.
+[2026-06-17 12:57:20] [ANALYSIS_AGENT] [INFO] Using Groq LLM: llama-3.3-70b-versatile
+[2026-06-17 12:57:23] [ANALYSIS_AGENT] [INFO] Building analysis agent with 10 tools: ['search_logs_semantic', 'list_recent_logs', 'get_session_trace', 'project_session_to_graph', 'query_knowledge_graph', 'get_graph_summary', 'calculate_latency_trends', 'calculate_token_trends', 'calculate_error_frequency', 'generate_performance_chart']
+[2026-06-17 12:57:23] [ANALYSIS_AGENT] [INFO] Analysis agent ready.
+[2026-06-17 12:57:23] [DASHBOARD] [INFO] Dashboard query: please analyse recent logs for me
+[2026-06-17 12:57:23] [ANALYSIS_AGENT] [INFO] Analysis query: please analyse recent logs for me
+[2026-06-17 12:57:24] [ANALYSIS_AGENT] [ERROR] Agent execution failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kv5f7qfaew49rptz6m1fkjgj` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 95691, Requested 4760. Please try again in 6m29.664s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+Traceback (most recent call last):
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 374, in run_analysis_query
+    await _run()
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 299, in _run
+    async for event in agent.astream(
+    ...<71 lines>...
+                    final_answer = content
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3407, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 706, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 733, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        step.ainvoke(input, config, **kwargs), context=context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 501, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1378, in amodel_node
+    model_response = await _execute_model_async(request)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1350, in _execute_model_async
+    output = await model_.ainvoke(messages)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5894, in ainvoke
+    return await self.bound.ainvoke(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 497, in ainvoke
+    llm_result = await self.agenerate_prompt(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1834, in agenerate_prompt
+    return await self.agenerate(
+           ^^^^^^^^^^^^^^^^^^^^^
+        prompt_messages, stop=stop, callbacks=callbacks, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1792, in agenerate
+    raise exceptions[0]
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 2127, in _agenerate_with_cache
+    result = await self._agenerate(
+             ^^^^^^^^^^^^^^^^^^^^^^
+        messages, stop=stop, run_manager=run_manager, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_groq\chat_models.py", line 648, in _agenerate
+    response = await self.async_client.create(messages=message_dicts, **params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\resources\chat\completions.py", line 941, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...<47 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\_base_client.py", line 1762, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\_base_client.py", line 1576, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kv5f7qfaew49rptz6m1fkjgj` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 95691, Requested 4760. Please try again in 6m29.664s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+During task with name 'model' and id 'be1dcc7e-27b3-5cef-b5ad-edaba6d69bff'
+[2026-06-17 12:57:24] [ANALYSIS_AGENT] [INFO] Analysis query complete. Steps: 0 | Answer length: 424
+[2026-06-17 12:57:24] [DASHBOARD] [INFO] Query completed in 1.2s
+[2026-06-17 13:11:28] [ANALYSIS_AGENT] [INFO] Trying Neo4j connection: neo4j+ssc://315b1756.databases.neo4j.io…
+[2026-06-17 13:11:31] [ANALYSIS_AGENT] [INFO] Available databases: ['315b1756', 'system', 'system', 'system']
+[2026-06-17 13:11:32] [ANALYSIS_AGENT] [INFO] Neo4j connected — database: '315b1756' via neo4j+ssc://315b1756.databases.neo4j.io
+[2026-06-17 13:11:32] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 13:11:32] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 13:11:32] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 13:11:32] [ANALYSIS_AGENT] [INFO] Neo4j schema ensured on database '315b1756'
+[2026-06-17 13:11:32] [DASHBOARD] [INFO] Neo4j schema ensured.
+[2026-06-17 13:11:32] [ANALYSIS_AGENT] [INFO] Using Groq LLM: llama-3.3-70b-versatile
+[2026-06-17 13:11:36] [ANALYSIS_AGENT] [INFO] Building analysis agent with 10 tools: ['search_logs_semantic', 'list_recent_logs', 'get_session_trace', 'project_session_to_graph', 'query_knowledge_graph', 'get_graph_summary', 'calculate_latency_trends', 'calculate_token_trends', 'calculate_error_frequency', 'generate_performance_chart']
+[2026-06-17 13:11:36] [ANALYSIS_AGENT] [INFO] Analysis agent ready.
+[2026-06-17 13:11:36] [DASHBOARD] [INFO] Dashboard query: please analyse recent logs for me
+[2026-06-17 13:11:36] [ANALYSIS_AGENT] [INFO] Analysis query: please analyse recent logs for me
+[2026-06-17 13:11:37] [ANALYSIS_AGENT] [INFO] [AGENT THOUGHT]
+
+[2026-06-17 13:11:37] [ANALYSIS_AGENT] [INFO] list_recent_logs | prefix='logs' | limit=30
+[2026-06-17 13:11:58] [ANALYSIS_AGENT] [INFO] AsyncSqliteStore initialised: mcp_agent_log.db
+[2026-06-17 13:11:58] [ANALYSIS_AGENT] [INFO] list_recent_logs returned 21 entries
+[2026-06-17 13:11:58] [ANALYSIS_AGENT] [INFO] [TOOL OBS — list_recent_logs]
+[
+  {
+    "key": "b33b909c-1377-49ff-ab29-583157300d35",
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "sampling_request",
+    "component": "mcp.sampling.request",
+    "content": "\n                    QUESTION:\n                    What are the current debate
+[2026-06-17 13:11:59] [ANALYSIS_AGENT] [ERROR] Agent execution failed: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kv5f7qfaew49rptz6m1fkjgj` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99448, Requested 7759. Please try again in 1h43m46.848s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+Traceback (most recent call last):
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 374, in run_analysis_query
+    await _run()
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 299, in _run
+    async for event in agent.astream(
+    ...<71 lines>...
+                    final_answer = content
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3407, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 706, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 733, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        step.ainvoke(input, config, **kwargs), context=context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 501, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1378, in amodel_node
+    model_response = await _execute_model_async(request)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1350, in _execute_model_async
+    output = await model_.ainvoke(messages)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5894, in ainvoke
+    return await self.bound.ainvoke(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 497, in ainvoke
+    llm_result = await self.agenerate_prompt(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1834, in agenerate_prompt
+    return await self.agenerate(
+           ^^^^^^^^^^^^^^^^^^^^^
+        prompt_messages, stop=stop, callbacks=callbacks, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1792, in agenerate
+    raise exceptions[0]
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 2127, in _agenerate_with_cache
+    result = await self._agenerate(
+             ^^^^^^^^^^^^^^^^^^^^^^
+        messages, stop=stop, run_manager=run_manager, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_groq\chat_models.py", line 648, in _agenerate
+    response = await self.async_client.create(messages=message_dicts, **params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\resources\chat\completions.py", line 941, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...<47 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\_base_client.py", line 1762, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\groq\_base_client.py", line 1576, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kv5f7qfaew49rptz6m1fkjgj` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99448, Requested 7759. Please try again in 1h43m46.848s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}
+During task with name 'model' and id '8fe22810-0993-fb97-e133-8fb1ae4f9291'
+[2026-06-17 13:11:59] [ANALYSIS_AGENT] [INFO] Analysis query complete. Steps: 2 | Answer length: 427
+[2026-06-17 13:11:59] [DASHBOARD] [INFO] Query completed in 23.5s
+[2026-06-17 13:13:45] [ANALYSIS_AGENT] [INFO] Trying Neo4j connection: neo4j+ssc://315b1756.databases.neo4j.io…
+[2026-06-17 13:13:49] [ANALYSIS_AGENT] [INFO] Available databases: ['315b1756', 'system', 'system', 'system']
+[2026-06-17 13:13:49] [ANALYSIS_AGENT] [INFO] Neo4j connected — database: '315b1756' via neo4j+ssc://315b1756.databases.neo4j.io
+[2026-06-17 13:13:49] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 13:13:49] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 13:13:49] [ANALYSIS_AGENT] [DEBUG] Constraint applied.
+[2026-06-17 13:13:49] [ANALYSIS_AGENT] [INFO] Neo4j schema ensured on database '315b1756'
+[2026-06-17 13:13:49] [DASHBOARD] [INFO] Neo4j schema ensured.
+[2026-06-17 13:13:51] [ANALYSIS_AGENT] [INFO] Using OpenRouter LLM: nvidia/nemotron-3-super-120b-a12b:free
+[2026-06-17 13:13:53] [ANALYSIS_AGENT] [INFO] Building analysis agent with 10 tools: ['search_logs_semantic', 'list_recent_logs', 'get_session_trace', 'project_session_to_graph', 'query_knowledge_graph', 'get_graph_summary', 'calculate_latency_trends', 'calculate_token_trends', 'calculate_error_frequency', 'generate_performance_chart']
+[2026-06-17 13:13:53] [ANALYSIS_AGENT] [INFO] Analysis agent ready.
+[2026-06-17 13:13:53] [DASHBOARD] [INFO] Dashboard query: please analyse recent logs for me
+[2026-06-17 13:13:53] [ANALYSIS_AGENT] [INFO] Analysis query: please analyse recent logs for me
+[2026-06-17 13:14:04] [ANALYSIS_AGENT] [INFO] [AGENT THOUGHT]
+
+[2026-06-17 13:14:04] [ANALYSIS_AGENT] [INFO] list_recent_logs | prefix='logs' | limit=30
+[2026-06-17 13:14:20] [ANALYSIS_AGENT] [INFO] AsyncSqliteStore initialised: mcp_agent_log.db
+[2026-06-17 13:14:20] [ANALYSIS_AGENT] [INFO] list_recent_logs returned 21 entries
+[2026-06-17 13:14:20] [ANALYSIS_AGENT] [INFO] [TOOL OBS — list_recent_logs]
+[
+  {
+    "key": "b33b909c-1377-49ff-ab29-583157300d35",
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "sampling_request",
+    "component": "mcp.sampling.request",
+    "content": "\n                    QUESTION:\n                    What are the current debate
+[2026-06-17 13:14:37] [ANALYSIS_AGENT] [INFO] [AGENT THOUGHT]
+
+[2026-06-17 13:14:37] [ANALYSIS_AGENT] [INFO] calculate_latency_trends called | window=3
+[2026-06-17 13:14:37] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_latency_trends]
+{"status": "no_data", "message": "No latency_ms values found. This is a final result \u2014 do not retry. Proceed to summarise.", "conclusion": "No latency data is available in the current logs."}
+[2026-06-17 13:14:58] [ANALYSIS_AGENT] [INFO] [AGENT THOUGHT]
+
+[2026-06-17 13:14:58] [ANALYSIS_AGENT] [INFO] list_recent_logs | prefix='logs' | limit=30
+[2026-06-17 13:14:58] [ANALYSIS_AGENT] [INFO] list_recent_logs returned 21 entries
+[2026-06-17 13:14:58] [ANALYSIS_AGENT] [INFO] [TOOL OBS — list_recent_logs]
+[
+  {
+    "key": "b33b909c-1377-49ff-ab29-583157300d35",
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "sampling_request",
+    "component": "mcp.sampling.request",
+    "content": "\n                    QUESTION:\n                    What are the current debate
+[2026-06-17 13:15:30] [ANALYSIS_AGENT] [INFO] [AGENT THOUGHT]
+
+[2026-06-17 13:15:30] [ANALYSIS_AGENT] [INFO] calculate_latency_trends called | window=3
+[2026-06-17 13:15:30] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_latency_trends]
+{"status": "no_data", "message": "No latency_ms values found. This is a final result \u2014 do not retry. Proceed to summarise.", "conclusion": "No latency data is available in the current logs."}
+[2026-06-17 13:15:42] [ANALYSIS_AGENT] [INFO] [AGENT THOUGHT]
+
+[2026-06-17 13:15:42] [ANALYSIS_AGENT] [INFO] search_logs_semantic | query='latency_ms' | prefix='logs'
+[2026-06-17 13:15:42] [ANALYSIS_AGENT] [INFO] search_logs_semantic returned 10 results
+[2026-06-17 13:15:42] [ANALYSIS_AGENT] [INFO] [TOOL OBS — search_logs_semantic]
+[
+  {
+    "key": "d6f70ee4-b738-437f-96ab-cebc81d806ee",
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "tool_observation",
+    "component": "mcp.server.notification",
+    "content": "CRAG resource invoked for query: 'current debates open-source vs closed-sourc
+[2026-06-17 13:16:00] [ANALYSIS_AGENT] [INFO] [AGENT THOUGHT]
+
+[2026-06-17 13:16:00] [ANALYSIS_AGENT] [INFO] calculate_token_trends called
+[2026-06-17 13:16:00] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_token_trends]
+{"status": "no_data", "message": "No token_count values found in any log entries.This is a final result \u2014 do not retry with different queries.", "conclusion": "Token consumption data is not available in the current logs. The sampling_request entries do not contain token_count or response_length
+[2026-06-17 13:17:13] [ANALYSIS_AGENT] [INFO] [AGENT THOUGHT]
+
+[2026-06-17 13:17:13] [ANALYSIS_AGENT] [INFO] calculate_latency_trends called | window=3
+[2026-06-17 13:17:13] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_latency_trends]
+{"status": "no_data", "message": "No latency_ms values found. This is a final result \u2014 do not retry. Proceed to summarise.", "conclusion": "No latency data is available in the current logs."}
+[2026-06-17 13:17:37] [ANALYSIS_AGENT] [INFO] [AGENT THOUGHT]
+
+[2026-06-17 13:17:37] [ANALYSIS_AGENT] [INFO] calculate_error_frequency called
+[2026-06-17 13:17:37] [ANALYSIS_AGENT] [INFO] [TOOL OBS — calculate_error_frequency]
+{"status": "ok", "total_errors": 0, "message": "No error entries found. This is a final result \u2014 do not retry.", "conclusion": "System appears healthy with no errors in the current logs."}
+[2026-06-17 13:18:00] [ANALYSIS_AGENT] [INFO] [AGENT ANSWER]
+We have analyzed recent logs. The logs show a single session (session_id: 661ec992-8756-436c-b89f-6eb0c514a66f) with a user query about open-source vs closed-source AI. The logs include various steps: discovery, resource reads, tool invocations, sampling requests, and observations.
+
+We attempted to 
+[2026-06-17 13:18:00] [ANALYSIS_AGENT] [INFO] Analysis query complete. Steps: 16 | Answer length: 4016
+[2026-06-17 13:18:00] [DASHBOARD] [INFO] Query completed in 246.7s
+[2026-06-17 13:22:33] [DASHBOARD] [INFO] Dashboard query: In one paragraph, summarize recent logs
+[2026-06-17 13:22:33] [ANALYSIS_AGENT] [INFO] Analysis query: In one paragraph, summarize recent logs
+[2026-06-17 13:22:48] [ANALYSIS_AGENT] [INFO] [AGENT THOUGHT]
+
+[2026-06-17 13:22:48] [ANALYSIS_AGENT] [INFO] list_recent_logs | prefix='logs' | limit=20
+[2026-06-17 13:22:48] [ANALYSIS_AGENT] [INFO] list_recent_logs returned 20 entries
+[2026-06-17 13:22:48] [ANALYSIS_AGENT] [INFO] [TOOL OBS — list_recent_logs]
+[
+  {
+    "key": "b33b909c-1377-49ff-ab29-583157300d35",
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "sampling_request",
+    "component": "mcp.sampling.request",
+    "content": "\n                    QUESTION:\n                    What are the current debate
+[2026-06-17 13:23:02] [ANALYSIS_AGENT] [INFO] [AGENT ANSWER]
+The recent logs depict a single MCP session (ID 661ec992‑8756‑436c‑b89f‑6eb0c514a66f) that processed a user query about the current debates between open‑source and closed‑source AI, evaluating trade‑offs and long‑term safety. The session began with a tool invocation of reflect_and_correct, followed 
+[2026-06-17 13:23:02] [ANALYSIS_AGENT] [INFO] Analysis query complete. Steps: 2 | Answer length: 851
+[2026-06-17 13:23:02] [DASHBOARD] [INFO] Query completed in 29.0s
+[2026-06-17 13:24:02] [DASHBOARD] [INFO] Dashboard query: List the most recent logs, get a session trace for the most recent session_id you find, then project it to the Neo4j graph. Show me a graph summary after the sync.
+[2026-06-17 13:24:02] [ANALYSIS_AGENT] [INFO] Analysis query: List the most recent logs, get a session trace for the most recent session_id you find, then project it to the Neo4j graph. Show me a graph summary after the sync.
+[2026-06-17 13:24:03] [ANALYSIS_AGENT] [ERROR] Agent execution failed: Connection error.
+Traceback (most recent call last):
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        pool_request.request
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\_base_client.py", line 1648, in request
+    response = await self._send_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\_client.py", line 946, in _send_request
+    return await self._send_with_auth_retry(request, stream=stream, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\_client.py", line 924, in _send_with_auth_retry
+    response = await super()._send_request(request, stream=stream, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\_base_client.py", line 1571, in _send_request
+    return await self._client.send(request, stream=stream, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 374, in run_analysis_query
+    await _run()
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 299, in _run
+    async for event in agent.astream(
+    ...<71 lines>...
+                    final_answer = content
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3407, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 706, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 733, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        step.ainvoke(input, config, **kwargs), context=context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 501, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1378, in amodel_node
+    model_response = await _execute_model_async(request)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1350, in _execute_model_async
+    output = await model_.ainvoke(messages)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5894, in ainvoke
+    return await self.bound.ainvoke(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 497, in ainvoke
+    llm_result = await self.agenerate_prompt(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1834, in agenerate_prompt
+    return await self.agenerate(
+           ^^^^^^^^^^^^^^^^^^^^^
+        prompt_messages, stop=stop, callbacks=callbacks, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1792, in agenerate
+    raise exceptions[0]
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 2127, in _agenerate_with_cache
+    result = await self._agenerate(
+             ^^^^^^^^^^^^^^^^^^^^^^
+        messages, stop=stop, run_manager=run_manager, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_openai\chat_models\base.py", line 1937, in _agenerate
+    _handle_openai_api_error(e)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_openai\chat_models\base.py", line 1930, in _agenerate
+    raw_response = await self.async_client.with_raw_response.create(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **payload
+        ^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\_legacy_response.py", line 384, in wrapped
+    return cast(LegacyAPIResponse[R], await func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\resources\chat\completions\completions.py", line 2739, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...<53 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\_base_client.py", line 1931, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\_base_client.py", line 1683, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+During task with name 'model' and id '29f9afba-2c81-2438-7634-8b6043942507'
+[2026-06-17 13:24:03] [ANALYSIS_AGENT] [INFO] Analysis query complete. Steps: 0 | Answer length: 33
+[2026-06-17 13:24:03] [DASHBOARD] [INFO] Query completed in 1.5s
+[2026-06-17 13:24:54] [DASHBOARD] [INFO] Dashboard query: List the most recent logs, get a session trace for the most recent session_id you find, then project it to the Neo4j graph. Show me a graph summary after the sync.
+[2026-06-17 13:24:54] [ANALYSIS_AGENT] [INFO] Analysis query: List the most recent logs, get a session trace for the most recent session_id you find, then project it to the Neo4j graph. Show me a graph summary after the sync.
+[2026-06-17 13:24:58] [ANALYSIS_AGENT] [INFO] [AGENT THOUGHT]
+
+[2026-06-17 13:24:58] [ANALYSIS_AGENT] [INFO] list_recent_logs | prefix='logs' | limit=30
+[2026-06-17 13:24:58] [ANALYSIS_AGENT] [INFO] list_recent_logs returned 21 entries
+[2026-06-17 13:24:58] [ANALYSIS_AGENT] [INFO] [TOOL OBS — list_recent_logs]
+[
+  {
+    "key": "b33b909c-1377-49ff-ab29-583157300d35",
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "sampling_request",
+    "component": "mcp.sampling.request",
+    "content": "\n                    QUESTION:\n                    What are the current debate
+[2026-06-17 13:25:06] [ANALYSIS_AGENT] [INFO] [AGENT THOUGHT]
+
+[2026-06-17 13:25:06] [ANALYSIS_AGENT] [INFO] get_session_trace | session_id=661ec992-8756-436c-b89f-6eb0c514a66f
+[2026-06-17 13:25:06] [ANALYSIS_AGENT] [INFO] get_session_trace found 21 entries for session 661ec992-8756-436c-b89f-6eb0c514a66f
+[2026-06-17 13:25:06] [ANALYSIS_AGENT] [INFO] [TOOL OBS — get_session_trace]
+[
+  {
+    "key": "65da25aa-0f10-490a-ad10-f591cd11b52e",
+    "session_id": "661ec992-8756-436c-b89f-6eb0c514a66f",
+    "mcp_interaction_type": "tool_invocation",
+    "component": "mcp.client.discovery",
+    "content": "Connected to MCP server. Tools: ['reflect_and_correct']",
+    "timestamp": 178167
+[2026-06-17 13:25:09] [ANALYSIS_AGENT] [ERROR] Agent execution failed: Error code: 429 - {'error': {'message': 'Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day', 'code': 429, 'metadata': {'headers': {'X-RateLimit-Limit': '50', 'X-RateLimit-Remaining': '0', 'X-RateLimit-Reset': '1781740800000'}, 'provider_name': None}}, 'user_id': 'user_34pdu3SiMkyBFvrVp9pVmI8LdJR'}
+Traceback (most recent call last):
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 374, in run_analysis_query
+    await _run()
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 299, in _run
+    async for event in agent.astream(
+    ...<71 lines>...
+                    final_answer = content
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3407, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 706, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 733, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        step.ainvoke(input, config, **kwargs), context=context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 501, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1378, in amodel_node
+    model_response = await _execute_model_async(request)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1350, in _execute_model_async
+    output = await model_.ainvoke(messages)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5894, in ainvoke
+    return await self.bound.ainvoke(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 497, in ainvoke
+    llm_result = await self.agenerate_prompt(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1834, in agenerate_prompt
+    return await self.agenerate(
+           ^^^^^^^^^^^^^^^^^^^^^
+        prompt_messages, stop=stop, callbacks=callbacks, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1792, in agenerate
+    raise exceptions[0]
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 2127, in _agenerate_with_cache
+    result = await self._agenerate(
+             ^^^^^^^^^^^^^^^^^^^^^^
+        messages, stop=stop, run_manager=run_manager, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_openai\chat_models\base.py", line 1937, in _agenerate
+    _handle_openai_api_error(e)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_openai\chat_models\base.py", line 1930, in _agenerate
+    raw_response = await self.async_client.with_raw_response.create(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **payload
+        ^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\_legacy_response.py", line 384, in wrapped
+    return cast(LegacyAPIResponse[R], await func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\resources\chat\completions\completions.py", line 2739, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...<53 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\_base_client.py", line 1931, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\_base_client.py", line 1716, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day', 'code': 429, 'metadata': {'headers': {'X-RateLimit-Limit': '50', 'X-RateLimit-Remaining': '0', 'X-RateLimit-Reset': '1781740800000'}, 'provider_name': None}}, 'user_id': 'user_34pdu3SiMkyBFvrVp9pVmI8LdJR'}
+During task with name 'model' and id 'a0fca22e-100b-e529-b71f-fbbfaaf2dcf5'
+[2026-06-17 13:25:09] [ANALYSIS_AGENT] [INFO] Analysis query complete. Steps: 4 | Answer length: 364
+[2026-06-17 13:25:09] [DASHBOARD] [INFO] Query completed in 14.6s
+[2026-06-17 13:25:28] [DASHBOARD] [INFO] Dashboard query: List the most recent log entries and calculate latency trends. Generate a latency performance chart.
+[2026-06-17 13:25:28] [ANALYSIS_AGENT] [INFO] Analysis query: List the most recent log entries and calculate latency trends. Generate a latency performance chart.
+[2026-06-17 13:25:31] [ANALYSIS_AGENT] [ERROR] Agent execution failed: Error code: 429 - {'error': {'message': 'Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day', 'code': 429, 'metadata': {'headers': {'X-RateLimit-Limit': '50', 'X-RateLimit-Remaining': '0', 'X-RateLimit-Reset': '1781740800000'}, 'provider_name': None}}, 'user_id': 'user_34pdu3SiMkyBFvrVp9pVmI8LdJR'}
+Traceback (most recent call last):
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 374, in run_analysis_query
+    await _run()
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 299, in _run
+    async for event in agent.astream(
+    ...<71 lines>...
+                    final_answer = content
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3407, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 706, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 733, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        step.ainvoke(input, config, **kwargs), context=context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 501, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1378, in amodel_node
+    model_response = await _execute_model_async(request)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1350, in _execute_model_async
+    output = await model_.ainvoke(messages)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5894, in ainvoke
+    return await self.bound.ainvoke(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 497, in ainvoke
+    llm_result = await self.agenerate_prompt(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1834, in agenerate_prompt
+    return await self.agenerate(
+           ^^^^^^^^^^^^^^^^^^^^^
+        prompt_messages, stop=stop, callbacks=callbacks, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1792, in agenerate
+    raise exceptions[0]
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 2127, in _agenerate_with_cache
+    result = await self._agenerate(
+             ^^^^^^^^^^^^^^^^^^^^^^
+        messages, stop=stop, run_manager=run_manager, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_openai\chat_models\base.py", line 1937, in _agenerate
+    _handle_openai_api_error(e)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_openai\chat_models\base.py", line 1930, in _agenerate
+    raw_response = await self.async_client.with_raw_response.create(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **payload
+        ^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\_legacy_response.py", line 384, in wrapped
+    return cast(LegacyAPIResponse[R], await func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\resources\chat\completions\completions.py", line 2739, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...<53 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\_base_client.py", line 1931, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\_base_client.py", line 1716, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day', 'code': 429, 'metadata': {'headers': {'X-RateLimit-Limit': '50', 'X-RateLimit-Remaining': '0', 'X-RateLimit-Reset': '1781740800000'}, 'provider_name': None}}, 'user_id': 'user_34pdu3SiMkyBFvrVp9pVmI8LdJR'}
+During task with name 'model' and id '469f7cbd-d50c-f004-d61a-a47783c8f6f8'
+[2026-06-17 13:25:31] [ANALYSIS_AGENT] [INFO] Analysis query complete. Steps: 0 | Answer length: 364
+[2026-06-17 13:25:31] [DASHBOARD] [INFO] Query completed in 3.1s
+[2026-06-17 13:25:38] [DASHBOARD] [INFO] Dashboard query: Search for any error or failure entries in the logs. Calculate error frequency and show me a chart.
+[2026-06-17 13:25:38] [ANALYSIS_AGENT] [INFO] Analysis query: Search for any error or failure entries in the logs. Calculate error frequency and show me a chart.
+[2026-06-17 13:25:42] [ANALYSIS_AGENT] [ERROR] Agent execution failed: Error code: 429 - {'error': {'message': 'Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day', 'code': 429, 'metadata': {'headers': {'X-RateLimit-Limit': '50', 'X-RateLimit-Remaining': '0', 'X-RateLimit-Reset': '1781740800000'}, 'provider_name': None}}, 'user_id': 'user_34pdu3SiMkyBFvrVp9pVmI8LdJR'}
+Traceback (most recent call last):
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 374, in run_analysis_query
+    await _run()
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 299, in _run
+    async for event in agent.astream(
+    ...<71 lines>...
+                    final_answer = content
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3407, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 706, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 733, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        step.ainvoke(input, config, **kwargs), context=context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 501, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1378, in amodel_node
+    model_response = await _execute_model_async(request)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1350, in _execute_model_async
+    output = await model_.ainvoke(messages)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5894, in ainvoke
+    return await self.bound.ainvoke(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 497, in ainvoke
+    llm_result = await self.agenerate_prompt(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1834, in agenerate_prompt
+    return await self.agenerate(
+           ^^^^^^^^^^^^^^^^^^^^^
+        prompt_messages, stop=stop, callbacks=callbacks, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1792, in agenerate
+    raise exceptions[0]
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 2127, in _agenerate_with_cache
+    result = await self._agenerate(
+             ^^^^^^^^^^^^^^^^^^^^^^
+        messages, stop=stop, run_manager=run_manager, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_openai\chat_models\base.py", line 1937, in _agenerate
+    _handle_openai_api_error(e)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_openai\chat_models\base.py", line 1930, in _agenerate
+    raw_response = await self.async_client.with_raw_response.create(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **payload
+        ^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\_legacy_response.py", line 384, in wrapped
+    return cast(LegacyAPIResponse[R], await func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\resources\chat\completions\completions.py", line 2739, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...<53 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\_base_client.py", line 1931, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\_base_client.py", line 1716, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day', 'code': 429, 'metadata': {'headers': {'X-RateLimit-Limit': '50', 'X-RateLimit-Remaining': '0', 'X-RateLimit-Reset': '1781740800000'}, 'provider_name': None}}, 'user_id': 'user_34pdu3SiMkyBFvrVp9pVmI8LdJR'}
+During task with name 'model' and id 'ea4a72af-625e-323d-e18b-0e16fadc1e5d'
+[2026-06-17 13:25:42] [ANALYSIS_AGENT] [INFO] Analysis query complete. Steps: 0 | Answer length: 364
+[2026-06-17 13:25:42] [DASHBOARD] [INFO] Query completed in 3.0s
+[2026-06-17 13:25:47] [DASHBOARD] [INFO] Dashboard query: Analyse token consumption patterns from sampling_request logs and generate a tokens chart.
+[2026-06-17 13:25:47] [ANALYSIS_AGENT] [INFO] Analysis query: Analyse token consumption patterns from sampling_request logs and generate a tokens chart.
+[2026-06-17 13:25:50] [ANALYSIS_AGENT] [ERROR] Agent execution failed: Error code: 429 - {'error': {'message': 'Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day', 'code': 429, 'metadata': {'headers': {'X-RateLimit-Limit': '50', 'X-RateLimit-Remaining': '0', 'X-RateLimit-Reset': '1781740800000'}, 'provider_name': None}}, 'user_id': 'user_34pdu3SiMkyBFvrVp9pVmI8LdJR'}
+Traceback (most recent call last):
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 374, in run_analysis_query
+    await _run()
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\analysis_dashboard\src\analysis_dashboard\analysis_agent.py", line 299, in _run
+    async for event in agent.astream(
+    ...<71 lines>...
+                    final_answer = content
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\main.py", line 3407, in astream
+    async for _ in runner.atick(
+    ...<16 lines>...
+            yield o
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_runner.py", line 396, in atick
+    await arun_with_retry(
+    ...<15 lines>...
+    )
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\pregel\_retry.py", line 706, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 733, in ainvoke
+    input = await asyncio.create_task(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+        step.ainvoke(input, config, **kwargs), context=context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langgraph\_internal\_runnable.py", line 501, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1378, in amodel_node
+    model_response = await _execute_model_async(request)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain\agents\factory.py", line 1350, in _execute_model_async
+    output = await model_.ainvoke(messages)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\runnables\base.py", line 5894, in ainvoke
+    return await self.bound.ainvoke(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 497, in ainvoke
+    llm_result = await self.agenerate_prompt(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1834, in agenerate_prompt
+    return await self.agenerate(
+           ^^^^^^^^^^^^^^^^^^^^^
+        prompt_messages, stop=stop, callbacks=callbacks, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 1792, in agenerate
+    raise exceptions[0]
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_core\language_models\chat_models.py", line 2127, in _agenerate_with_cache
+    result = await self._agenerate(
+             ^^^^^^^^^^^^^^^^^^^^^^
+        messages, stop=stop, run_manager=run_manager, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_openai\chat_models\base.py", line 1937, in _agenerate
+    _handle_openai_api_error(e)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\langchain_openai\chat_models\base.py", line 1930, in _agenerate
+    raw_response = await self.async_client.with_raw_response.create(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        **payload
+        ^^^^^^^^^
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\_legacy_response.py", line 384, in wrapped
+    return cast(LegacyAPIResponse[R], await func(*args, **kwargs))
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\resources\chat\completions\completions.py", line 2739, in create
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+    ...<53 lines>...
+    )
+    ^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\_base_client.py", line 1931, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\Documents\thinking_agent_with_mcp\.venv\Lib\site-packages\openai\_base_client.py", line 1716, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit exceeded: free-models-per-day. Add 10 credits to unlock 1000 free model requests per day', 'code': 429, 'metadata': {'headers': {'X-RateLimit-Limit': '50', 'X-RateLimit-Remaining': '0', 'X-RateLimit-Reset': '1781740800000'}, 'provider_name': None}}, 'user_id': 'user_34pdu3SiMkyBFvrVp9pVmI8LdJR'}
+During task with name 'model' and id '1e12ff96-05db-11a4-3a63-450c09da1ce5'
+[2026-06-17 13:25:50] [ANALYSIS_AGENT] [INFO] Analysis query complete. Steps: 0 | Answer length: 364
+[2026-06-17 13:25:50] [DASHBOARD] [INFO] Query completed in 3.1s

@@ -384,17 +384,6 @@ async def _tot_evaluate_with_llm(
 
     tot_messages = [
         SamplingMessage(
-            role="assistant",
-            content=TextContent(
-                type="text",
-                text=(
-                    "You are evaluating retrieved chunks as three personas: "
-                    "Analyst (depth/accuracy), Relevance Expert (query match), "
-                    "and Coverage Reviewer (completeness). Produce a JSON report."
-                ),
-            ),
-        ),
-        SamplingMessage(
             role="user",
             content=TextContent(
                 type="text",
@@ -560,18 +549,6 @@ async def _run_critic(
     await ctx.info("Running critic evaluation via MCP Sampling...")
     critic_messages = [
         SamplingMessage(
-            role="assistant",
-            content=TextContent(
-                type="text",
-                text=(
-                    "You are a rigorous fact-checking critic.\n"
-                    "Evaluate the draft answer ONLY against the supplied "
-                    "search results.\n"
-                    "Return valid JSON only."
-                ),
-            ),
-        ),
-        SamplingMessage(
             role="user",
             content=TextContent(
                 type="text",
@@ -670,16 +647,6 @@ async def _run_corrector(
     problems = critique.problems
 
     corrector_messages = [
-        SamplingMessage(
-            role="assistant",
-            content=TextContent(
-                type="text",
-                text=(
-                    "You are a correction editor.\n"
-                    "Rewrite answers using ONLY the supplied search results."
-                ),
-            ),
-        ),
         SamplingMessage(
             role="user",
             content=TextContent(

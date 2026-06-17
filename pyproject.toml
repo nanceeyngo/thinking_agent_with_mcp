@@ -1,5 +1,5 @@
 [tool.uv]
-workspace = { members = ["mcp_server", "agent_client"], exclude = [] }
+workspace = { members = ["mcp_server", "agent_client", "analysis_dashboard"], exclude = [] }
 
 [tool.black]
 line-length = 88
