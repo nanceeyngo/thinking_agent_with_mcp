@@ -186,8 +186,10 @@ CRITICAL RULES:
    and move to the next step or write your summary.
    Do NOT retry with different queries.
 7. If a tool returns an error, try ONCE with corrected input, then move on.
-8. When the user asks to save a chart, pass save_to_disk=True to
-   generate_performance_chart.
+8. ALWAYS pass save_to_disk=True when calling generate_performance_chart,
+   so the chart PNG file is saved to disk for later reference.
+   The filename parameter is optional - if not provided, a timestamped
+   name will be used automatically.
 
   Example (CORRECT):
     Step 1 → call search_logs_semantic(query="sampling_request", ...)
@@ -224,9 +226,14 @@ Error analysis:
 Neo4j sync:
   1. list_recent_logs
   2. get_session_trace(session_id=<most recent session_id from step 1>)
-  3. project_session_to_graph(session_json=FULL_OUTPUT)
-  4. get_graph_summary
+  3. project_session_to_graph(session_json=FULL_OUTPUT)  ← The system
+     will automatically pass the complete JSON from step 2
+  4. get_graph_summary()
   5. Summarise and STOP.
+  IMPORTANT for step 3: Just call project_session_to_graph with the string
+  "FULL_OUTPUT" as the session_json argument. Do NOT attempt to paste the actual
+  JSON content. The system will replace "FULL_OUTPUT" with the complete data
+  from get_session_trace automatically.
 
 Always provide structured, actionable diagnostic insights in your final summary.
 """
@@ -300,11 +307,19 @@ async def run_analysis_query(
                     full_content = str(msg.content)
 
                     agent_logger.info(
-                        "[TOOL OBS — %s]\n%s", tool_name, full_content[:300]
+                        "[TOOL OBS — %s]\n%s", tool_name, len(full_content)
                     )
 
                     # Store full output for pass-through
                     last_full_output[tool_name] = full_content
+
+                    # Build compact summary for the steps UI
+                    # For large outputs, truncate to keep UI responsive
+                    # display_content = (
+                    #     full_content[:500] + "..."
+                    #     if len(full_content) > 500
+                    #     else full_content
+                    # )
 
                     # Build compact summary for the steps UI
                     steps.append(
@@ -313,7 +328,7 @@ async def run_analysis_query(
                             "tool": tool_name,
                             "thought": "",
                             "tool_input": "",
-                            "content": full_content,  # full content for UI
+                            "content": full_content,
                         }
                     )
 
@@ -337,6 +352,7 @@ async def run_analysis_query(
                                     and "FULL_OUTPUT" in arg_val
                                 ):
                                     # Find the most recent retrieval output
+                                    resolved = False
                                     for src in _LARGE_OUTPUT_TOOLS:
                                         if src in last_full_output:
                                             tc_args[arg_key] = last_full_output[src]
@@ -348,7 +364,20 @@ async def run_analysis_query(
                                                 src,
                                                 len(last_full_output[src]),
                                             )
+                                            resolved = True
                                             break
+
+                                    # Fallback: use last tool output regardless of type
+                                    if not resolved and last_full_output:
+                                        # Get the most recent tool output
+                                        last_tool = list(last_full_output.keys())[-1]
+                                        tc_args[arg_key] = last_full_output[last_tool]
+                                        agent_logger.info(
+                                            "Fallback FULL_OUTPUT: "
+                                            "using %s output (%d chars)",
+                                            last_tool,
+                                            len(last_full_output[last_tool]),
+                                        )
 
                             steps.append(
                                 {
@@ -427,3 +456,327 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+# """
+# analysis_dashboard/analysis_agent.py
+
+# Decoupled Log Analysis Agent.
+
+# This module runs as a completely separate process from the MCP client/server.
+# It uses LangChain's create_agent factory with six specialised tools:
+
+#   Retrieval tools (from retrieval_tools.py):
+#     • search_logs_semantic   - vector-similarity log search
+#     • list_recent_logs       - time-ordered log scan
+#     • get_session_trace      - full session execution trace
+
+#   Neo4j tools (from neo4j_tools.py):
+#     • project_session_to_graph  - map session traces to Neo4j KG
+#     • query_knowledge_graph     - read Cypher queries
+#     • get_graph_summary         - high-level graph stats
+
+#   Analytics tools (from analytics_tools.py):
+#     • calculate_latency_trends   - moving-average latency analysis
+#     • calculate_token_trends     - token consumption patterns
+#     • calculate_error_frequency  - error event frequency
+#     • generate_performance_chart - matplotlib/seaborn visualisations
+
+# All agent execution is logged to analysis_agent.log.
+# """
+
+# from __future__ import annotations
+
+# import asyncio
+# import logging
+# import sys
+# from pathlib import Path
+
+# from langchain.agents import create_agent
+# from langchain_core.messages import AIMessage, HumanMessage
+
+# from analysis_dashboard.settings import settings
+
+# # Logging
+
+# LOG_FILE = Path("analysis_agent.log")
+
+# _handler_file = logging.FileHandler(LOG_FILE, mode="a", encoding="utf-8")
+# _handler_file.setFormatter(
+#     logging.Formatter(
+#         "[%(asctime)s] [ANALYSIS_AGENT] [%(levelname)s] %(message)s",
+#         datefmt="%Y-%m-%d %H:%M:%S",
+#     )
+# )
+# _handler_stdout = logging.StreamHandler(sys.stdout)
+# _handler_stdout.setFormatter(
+#     logging.Formatter(
+#         "[%(asctime)s] [ANALYSIS_AGENT] [%(levelname)s] %(message)s",
+#         datefmt="%Y-%m-%d %H:%M:%S",
+#     )
+# )
+
+# agent_logger = logging.getLogger("analysis_agent")
+# agent_logger.setLevel(logging.DEBUG)
+# if not agent_logger.handlers:
+#     agent_logger.addHandler(_handler_file)
+#     agent_logger.addHandler(_handler_stdout)
+# agent_logger.propagate = False
+
+
+# # LLM factory
+
+
+# def _build_llm():
+#     if settings.use_groq and settings.groq_api_key:
+#         from langchain_groq import ChatGroq  # type: ignore[import]
+
+#         agent_logger.info("Using Groq LLM: %s", settings.groq_model_name)
+#         return ChatGroq(
+#             model=settings.groq_model_name,
+#             temperature=settings.model_temperature,
+#             api_key=settings.groq_api_key.get_secret_value(),
+#             max_tokens=2048,
+#             default_headers={
+#                 "HTTP-Referer": "https://thinking-agent-analysis",
+#                 "X-Title": "Thinking Agent Analysis Dashboard",
+#             },
+#         )
+#     elif settings.openrouter_api_key:
+#         from langchain_openai import ChatOpenAI
+
+#         agent_logger.info("Using OpenRouter LLM: %s", settings.model_name)
+#         return ChatOpenAI(
+#             model=settings.model_name,
+#             temperature=settings.model_temperature,
+#             openai_api_key=settings.openrouter_api_key.get_secret_value(),
+#             openai_api_base="https://openrouter.ai/api/v1",
+#             max_tokens=2048,
+#             default_headers={
+#                 "HTTP-Referer": "https://thinking-agent-analysis",
+#                 "X-Title": "Thinking Agent Analysis Dashboard",
+#             },
+#         )
+#     else:
+#         raise ValueError(
+#             "No LLM configured. Set OPENROUTER_API_KEY or GROQ_API_KEY in .env"
+#         )
+
+
+# # Tool bundle
+# def _build_tools():
+#     from analysis_dashboard.retrieval_tools import (
+#         get_session_trace,
+#         list_recent_logs,
+#         search_logs_semantic,
+#     )
+#     from analysis_dashboard.neo4j_tools import (
+#         get_graph_summary,
+#         project_session_to_graph,
+#         query_knowledge_graph,
+#     )
+#     from analysis_dashboard.analytics_tools import (
+#         calculate_error_frequency,
+#         calculate_latency_trends,
+#         calculate_token_trends,
+#         generate_performance_chart,
+#     )
+
+#     return [
+#         # Retrieval
+#         search_logs_semantic,
+#         list_recent_logs,
+#         get_session_trace,
+#         # Neo4j
+#         project_session_to_graph,
+#         query_knowledge_graph,
+#         get_graph_summary,
+#         # Analytics
+#         calculate_latency_trends,
+#         calculate_token_trends,
+#         calculate_error_frequency,
+#         generate_performance_chart,
+#     ]
+
+
+# # System prompt
+
+# ANALYSIS_AGENT_SYSTEM_PROMPT = """
+# You are an expert Log Analysis Agent for a distributed multi-agent MCP system.
+
+# You have access to the following tools:
+
+# RETRIEVAL TOOLS:
+#   - search_logs_semantic: Vector-similarity search over execution logs.
+#   - list_recent_logs: Time-ordered scan of log entries.
+#   - get_session_trace: Full causal trace for a specific session_id.
+
+# NEO4J GRAPH TOOLS:
+#   - project_session_to_graph: Map session traces into the Neo4j knowledge graph.
+#   - query_knowledge_graph: Execute read Cypher queries.
+#   - get_graph_summary: High-level graph node/edge statistics.
+
+# ANALYTICS TOOLS:
+#   - calculate_latency_trends: Moving-average latency analysis.
+#   - calculate_token_trends: Token consumption patterns.
+#   - calculate_error_frequency: Error/failure event counting.
+#   - generate_performance_chart: Generate matplotlib/seaborn charts.
+
+# DIAGNOSTIC WORKFLOW:
+# When asked to analyse system health:
+#   1. Call list_recent_logs to get an overview of recent activity.
+#   2. Call search_logs_semantic with relevant terms to find anomalies.
+#   3. If errors are found, call get_session_trace for the affected session.
+#   4. Call project_session_to_graph to persist the trace to Neo4j.
+#   5. Call calculate_latency_trends and calculate_error_frequency.
+#   6. Call generate_performance_chart to produce visualisations.
+#   7. Call get_graph_summary to confirm graph was updated.
+#   8. Summarise findings clearly.
+
+# When the user asks to save a chart, pass save_to_disk=True
+# to generate_performance_chart.
+
+# Always provide structured, actionable diagnostic insights.
+
+# CRITICAL TOOL CHAINING RULE:
+# Tools must be called sequentially, one at a time. You must NEVER pass a tool
+# call as an argument to another tool. Always:
+#   1. Call the first tool and wait for its string output.
+#   2. Take that string output and pass it as the argument to the next tool.
+
+# Example (CORRECT):
+#   Step 1 → call search_logs_semantic(query="sampling_request", ...)
+#   Step 2 → receive JSON string result
+#   Step 3 → call calculate_token_trends(logs_json="<the JSON string from step 2>")
+
+# Example (WRONG — never do this):
+#   calculate_token_trends(logs_json=search_logs_semantic(...))
+
+# TOKEN ANALYSIS WORKFLOW:
+# When asked to analyse token consumption:
+#   1. Call search_logs_semantic with query="sampling_request token consumption"
+#      and namespace_prefix="logs" to get a JSON string of log entries.
+#   2. Pass that JSON string to calculate_token_trends(logs_json=<result>).
+#   3. Pass the result of calculate_token_trends to
+#      generate_performance_chart(metric_json=<result>, chart_type="tokens").
+# """
+
+
+# # Agent factory
+
+
+# def build_analysis_agent():
+#     """Build and return the Log Analysis Agent."""
+#     llm = _build_llm()
+#     tools = _build_tools()
+#     agent_logger.info(
+#         "Building analysis agent with %d tools: %s",
+#         len(tools),
+#         [t.name for t in tools],
+#     )
+#     agent = create_agent(
+#         model=llm,
+#         tools=tools,
+#         system_prompt=ANALYSIS_AGENT_SYSTEM_PROMPT,
+#     )
+#     agent_logger.info("Analysis agent ready.")
+#     return agent
+
+
+# # Streaming runner
+
+
+# async def run_analysis_query(
+#     agent,
+#     query: str,
+# ) -> tuple[str, list[dict]]:
+#     """
+#     Run a query against the analysis agent and collect:
+#       - The final answer text
+#       - A list of step dicts for UI rendering
+
+#     Returns (final_answer: str, steps: list[dict])
+#     """
+#     agent_logger.info("Analysis query: %s", query[:200])
+#     steps: list[dict] = []
+#     final_answer = ""
+#     try:
+#         async for event in agent.astream({"messages": [HumanMessage(content=query)]}):
+#             if "tools" in event:
+#                 for msg in event["tools"].get("messages", []):
+#                     tool_name = getattr(msg, "name", "tool")
+#                     content = str(msg.content)
+#                     agent_logger.info("[TOOL OBS — %s]\n%s", tool_name, content[:300])
+#                     steps.append(
+#                         {
+#                             "type": "tool_observation",
+#                             "tool": tool_name,
+#                             "content": content,
+#                         }
+#                     )
+
+#             if "model" in event:
+#                 for msg in event["model"].get("messages", []):
+#                     if isinstance(msg, AIMessage) and msg.content.strip():
+#                         agent_logger.info("[AGENT THOUGHT]\n%s", str(msg.content)
+# [:300])
+#                         steps.append(
+#                             {
+#                                 "type": "agent_thought",
+#                                 "content": str(msg.content),
+#                             }
+#                         )
+#                         final_answer = str(msg.content)
+#     except Exception as e:
+#         agent_logger.error(f"Agent execution failed: {e}", exc_info=True)
+#         return f"Error: {str(e)}", steps
+#     agent_logger.info("Analysis query complete. Steps: %d", len(steps))
+#     return final_answer, steps
+
+
+# # CLI entry point
+
+
+# async def _cli_main() -> None:
+#     """Interactive CLI for the analysis agent (used when run directly)."""
+#     from analysis_dashboard.neo4j_tools import ensure_schema
+
+#     try:
+#         ensure_schema()
+#     except Exception as exc:
+#         agent_logger.warning("Neo4j schema init: %s", exc)
+
+#     agent = build_analysis_agent()
+
+#     print("\n" + "=" * 60)
+#     print("  Log Analysis Agent — Interactive Mode")
+#     print("  Type 'exit' to quit.")
+#     print("=" * 60 + "\n")
+
+#     while True:
+#         try:
+#             query = input("You: ").strip()
+#         except (EOFError, KeyboardInterrupt):
+#             print("\nExiting.")
+#             break
+
+#         if query.lower() in ("exit", "quit", "q"):
+#             break
+#         if not query:
+#             continue
+
+#         answer, steps = await run_analysis_query(agent, query)
+#         print(f"\nAgent: {answer}\n")
+
+
+# def main() -> None:
+#     """Synchronous entry point for uv run."""
+#     # asyncio.run(_cli_main())
+#     # FIX: Enforce ProactorEventLoopPolicy for Windows
+#     if sys.platform == "win32":
+#         asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+#     asyncio.run(_cli_main())
+
+
+# if __name__ == "__main__":
+#     main()

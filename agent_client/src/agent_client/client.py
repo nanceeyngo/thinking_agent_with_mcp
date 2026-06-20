@@ -88,18 +88,6 @@ client_log.info("Session started | session_id=%s", SESSION_ID)
 
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
-# llm = ChatOpenAI(
-#     model=settings.model_name,
-#     temperature=settings.model_temperature,
-#     openai_api_key=settings.openrouter_api_key.get_secret_value(),
-#     openai_api_base=OPENROUTER_BASE_URL,
-#     max_tokens=2048,
-#     default_headers={
-#         "HTTP-Referer": "https://thinking-agent-stage3",
-#         "X-Title": "Thinking Agent Stage 3",
-#     },
-# )
-
 
 def _get_llm():
     if settings.use_groq and settings.groq_api_key:
@@ -182,11 +170,6 @@ async def _store_entry(
             client_log.warning(
                 "Vector store write returned empty key. " "Check database connection."
             )
-        # if result.get("store_type") == "memory" and _store_warn_count == 0:
-        #     client_log.warning(
-        #         "Vector store is using InMemoryStore (not SQLite). "
-        #         "Logs will NOT persist. Check SqliteStore install."
-        #     )
     except Exception as exc:
         _store_warn_count += 1
         if _store_warn_count <= 3:
@@ -200,9 +183,6 @@ async def _store_entry(
                 "Vector store write errors suppressed after 3 attempts. "
                 "Flat log (agent_system.log) continues normally."
             )
-    #     write_log(entry)
-    # except Exception as exc:
-    #     client_log.debug("Vector store write skipped: %s", exc)
 
 
 # 6. MCP Callback Handlers
@@ -295,6 +275,13 @@ async def sampling_handler(
         or "sampling_request"
     )
 
+    # Get input token count from messages
+    input_chars = sum(len(str(msg.content)) for msg in lc_messages)
+    if system_message:
+        input_chars += len(system_message)
+    # Rough token estimate: ~4 chars per token
+    estimated_input_tokens = input_chars // 4
+
     await _store_entry(
         mcp_interaction_type="sampling_request",
         component="mcp.sampling.request",
@@ -303,22 +290,11 @@ async def sampling_handler(
             "request_id": str(context.request_id),
             "message_count": len(messages),
             "max_tokens": getattr(params, "maxTokens", None),
+            "input_chars": input_chars,
+            "token_count": estimated_input_tokens,  # Add token count for requests too
+            "estimated_input_tokens": estimated_input_tokens,
         },
     )
-
-    # If no system message in messages, but we have text to process,
-    # treat the first user message as the main prompt
-    # (system message if provided should take precedence)
-
-    # client_log.debug(
-    #     "Sampling request converted | messages=%d | system_msg=%s | "
-    #     "max_tokens=%s | temperature=%s",
-    #     len(messages),
-    #     "present" if system_message else "absent",
-    #     getattr(params, "maxTokens", "default"),
-    #     getattr(params, "temperature", "default"),
-    # )
-
     try:
         # Build message list with system message if present
         final_messages = []
@@ -340,11 +316,67 @@ async def sampling_handler(
         )
         result_text = response.content
         latency_ms = int((time.perf_counter() - t0) * 1000)
+
+        # Try to get actual token usage from response metadata
+        response_metadata = {}
+        if hasattr(response, "response_metadata"):
+            response_metadata = response.response_metadata
+        elif hasattr(response, "usage_metadata"):
+            response_metadata = response.usage_metadata
+
+        # Log what metadata is available for debugging
         client_log.info(
-            "Sampling response generated | length=%d chars", len(result_text)
+            "Response metadata keys: %s",
+            list(response_metadata.keys()) if response_metadata else "none",
         )
 
-        # Log sampling response
+        token_usage = response_metadata.get("token_usage", {}) or response_metadata.get(
+            "usage", {}
+        )
+
+        # Extract token counts from whatever format the API returns
+        completion_tokens = (
+            token_usage.get("completion_tokens", 0)
+            or token_usage.get("output_tokens", 0)
+            or 0
+        )
+        prompt_tokens = (
+            token_usage.get("prompt_tokens", 0)
+            or token_usage.get("input_tokens", 0)
+            or 0
+        )
+        total_tokens = (
+            token_usage.get("total_tokens", 0)
+            or (completion_tokens + prompt_tokens)
+            or 0
+        )
+
+        # If no token usage from API, ALWAYS estimate based on character count
+        if total_tokens == 0:
+            completion_tokens = max(
+                1, len(result_text) // 4
+            )  # Rough estimate: 4 chars per token
+            prompt_tokens = (
+                max(1, estimated_input_tokens)
+                if estimated_input_tokens > 0
+                else max(1, input_chars // 4)
+            )
+            total_tokens = completion_tokens + prompt_tokens
+            token_source = "estimated"
+        else:
+            token_source = "api"
+
+        client_log.info(
+            "Sampling response generated | length=%d chars "
+            "| tokens=%d (prompt=%d, completion=%d) | source=%s",
+            len(result_text),
+            total_tokens,
+            prompt_tokens,
+            completion_tokens,
+            token_source,
+        )
+
+        # Log sampling response with comprehensive token metadata
         await _store_entry(
             mcp_interaction_type="sampling_request",
             component="mcp.sampling.response",
@@ -353,6 +385,11 @@ async def sampling_handler(
                 "request_id": str(context.request_id),
                 "latency_ms": latency_ms,
                 "response_length": len(str(result_text)),
+                "token_count": total_tokens,  # THIS IS THE KEY FIELD
+                "prompt_tokens": prompt_tokens,
+                "completion_tokens": completion_tokens,
+                "token_usage_source": token_source,
+                "estimated_input_tokens": estimated_input_tokens,
             },
         )
         return result_text
@@ -716,17 +753,17 @@ async def _async_main() -> None:
 
     # Test queries
     queries = [
-        (
-            "What are the current debates around open-source vs "
-            "closed-source AI? Evaluate the trade-offs and recommend which "
-            "approach is better for long-term AI safety.",
-            "Test 1 — Trade-off Query",
-        ),
-        (
-            "What are the latest developments in quantum computing? "
-            "Focus on recent breakthroughs and their practical implications.",
-            "Test 2 — Factual Query",
-        ),
+        # (
+        #     "What are the current debates around open-source vs "
+        #     "closed-source AI? Evaluate the trade-offs and recommend which "
+        #     "approach is better for long-term AI safety.",
+        #     "Test 1 — Trade-off Query",
+        # ),
+        # (
+        #     "What are the latest developments in quantum computing? "
+        #     "Focus on recent breakthroughs and their practical implications.",
+        #     "Test 2 — Factual Query",
+        # ),
         (
             "Should governments regulate large language models? "
             "Analyse the trade-offs between innovation and public safety.",
