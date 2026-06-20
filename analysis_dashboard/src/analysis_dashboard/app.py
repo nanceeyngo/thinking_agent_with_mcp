@@ -115,24 +115,6 @@ def _get_agent():
     return st.session_state["agent"]
 
 
-# Async helper
-
-
-# def _run_async(coro):
-#     """Run a coroutine from a sync Streamlit context."""
-#     try:
-#         loop = asyncio.get_event_loop()
-#         if loop.is_running():
-#             import concurrent.futures
-
-
-#             with concurrent.futures.ThreadPoolExecutor() as pool:
-#                 future = pool.submit(asyncio.run, coro)
-#                 return future.result()
-#         # else:
-#         #     return loop.run_until_complete(coro)
-#     except RuntimeError:
-#         return asyncio.run(coro)
 def _run_async(coro):
     """
     Run *coro* in the persistent background event loop owned by
@@ -293,146 +275,8 @@ def _render_steps(steps: list[dict]) -> list[str]:
                             st.caption(f"... ({len(content)} total characters)")
 
             st.divider()
-            # elif step_type == "agent_thought":
-            #     content = step.get("content", "")
-            #     st.markdown(f"**Step {i} — Agent Thought**")
-            #     st.markdown(f"> {content[:500]}")
-
-            # st.divider()
 
     return charts
-
-
-# def _render_steps(steps: list[dict]) -> list[str]:
-#     """
-#     Render agent reasoning steps in an expander.
-#     Returns list of base64-encoded chart images found in tool outputs.
-#     """
-#     from analysis_dashboard.analytics_tools import get_chart_image
-
-#     charts: list[str] = []
-#     if not steps:
-#         return charts
-
-#     with st.expander("🧠 Agent Reasoning Steps", expanded=False):
-#         for i, step in enumerate(steps, 1):
-#             step_type = step.get("type", "")
-
-#             if step_type == "tool_observation":
-#                 tool_name = step.get("tool", "tool")
-#                 content = step.get("content", "")
-
-#                 st.markdown(f"**Step {i} — Tool:** `{tool_name}`")
-
-#                 try:
-#                     parsed = json.loads(content)
-
-#                     # Fetch chart image from registry if this is a chart result
-#                     if isinstance(parsed, dict) and "chart_id" in parsed:
-#                         chart_id = parsed["chart_id"]
-#                         img_b64 = get_chart_image(chart_id)
-#                         if img_b64:
-#                             charts.append(img_b64)
-#                         # Show the summary without any blob
-#                         st.json(parsed)
-
-#                     else:
-#                         st.json(parsed)
-
-#                     # Neo4j update notification
-#                     if isinstance(parsed, dict) and parsed.get("status") == "success":
-#                         if "nodes_created" in parsed:
-#                             msg = (
-#                                 f"Neo4j updated — session: "
-#                                 f"{parsed.get('session_id', '')[:12]}… | "
-#                                 f"nodes: {parsed.get('nodes_created', 0)} | "
-#                                 f"edges: {parsed.get('edges_created', 0)}"
-#                             )
-#                             st.session_state["neo4j_updates"].append(msg)
-#                             st.success(msg, icon="✅")
-
-#                 except (json.JSONDecodeError, TypeError):
-#                     st.text_area(
-#                         "Output",
-#                         content[:1500],
-#                         height=100,
-#                         key=f"step_{i}_{tool_name}",
-#                     )
-
-#             elif step_type == "agent_thought":
-#                 content = step.get("content", "")
-#                 st.markdown(f"**Step {i} — Agent Thought**")
-#                 st.markdown(f"> {content[:500]}")
-
-#             st.divider()
-
-#     return charts
-
-
-# def _render_steps(steps: list[dict]) -> list[str]:
-#     """
-#     Render agent reasoning steps in an expander.
-#     Returns list of base64-encoded chart images found in tool outputs.
-#     """
-#     from analysis_dashboard.analytics_tools import get_chart_image
-
-#     charts: list[str] = []
-#     if not steps:
-#         return charts
-
-#     with st.expander("🧠 Agent Reasoning Steps", expanded=False):
-#         for i, step in enumerate(steps, 1):
-#             step_type = step.get("type", "")
-
-#             if step_type == "tool_observation":
-#                 tool_name = step.get("tool", "tool")
-#                 content = step.get("content", "")
-
-#                 st.markdown(f"**Step {i} — Tool:** `{tool_name}`")
-
-#                 # Try to parse and pretty-print JSON tool outputs
-#                 try:
-#                     parsed = json.loads(content)
-
-#                     # Extract chart image if present
-#                     if isinstance(parsed, dict) and "image_base64" in parsed:
-#                         charts.append(parsed["image_base64"])
-#                         # Show graph summary without the raw b64 blob
-#                         display = {
-#                             k: v for k, v in parsed.items() if k != "image_base64"
-#                         }
-#                         st.json(display)
-#                     else:
-#                         st.json(parsed)
-
-#                     # Neo4j update notification
-#                     if isinstance(parsed, dict) and parsed.get("status") == "success":
-#                         if "nodes_created" in parsed:
-#                             msg = (
-#                                 f"Neo4j updated — session: "
-#                                 f"{parsed.get('session_id', '')[:12]}… | "
-#                                 f"nodes: {parsed.get('nodes_created', 0)} | "
-#                                 f"edges: {parsed.get('edges_created', 0)}"
-#                             )
-#                             st.session_state["neo4j_updates"].append(msg)
-#                             st.success(msg, icon="✅")
-
-#                 except (json.JSONDecodeError, TypeError):
-#                     st.text_area(
-#                         "Output",
-#                         content[:1500],
-#                         height=100,
-#                         key=f"step_{i}_{tool_name}",
-#                     )
-
-#             elif step_type == "agent_thought":
-#                 content = step.get("content", "")
-#                 st.markdown(f"**Step {i} — Agent Thought**")
-#                 st.markdown(f"> {content[:500]}")
-
-#             st.divider()
-
-#     return charts
 
 
 # Chart renderer
@@ -559,12 +403,8 @@ def _render_log_browser():
                 # Use the same sync store as the tools
                 from analysis_dashboard.retrieval_tools import search_sync
 
-                # store = _get_store()
                 ns_tuple = tuple(ns_input.split(".")) if ns_input else ("logs",)
                 results = search_sync(ns_tuple, "", limit)
-                # results = _search_sync(ns_tuple, "", limit)
-                # results = store.search(ns_tuple, query="", limit=limit)
-
                 if results:
                     rows = []
                     for item in results:
@@ -595,53 +435,6 @@ def _render_log_browser():
             except Exception as exc:
                 st.error(f"Could not load logs: {exc}")
                 logger.error(f"Log browser error: {exc}", exc_info=True)
-
-
-# def _render_log_browser():
-#     st.header("📋 Log Browser")
-#     st.caption("Browse raw log entries from the vector store.")
-
-#     col1, col2 = st.columns([2, 1])
-#     with col1:
-#         ns_input = st.text_input(
-#             "Namespace prefix",
-#             value="logs",
-#             help="Dot-separated, e.g. 'logs.mcp.client'",
-#         )
-#     with col2:
-#         limit = st.slider("Max entries", 5, 100, 30)
-
-#     if st.button("Load Logs"):
-#         with st.spinner("Loading…"):
-#             try:
-# from analysis_dashboard.retrieval_tools import _get_store_and_embeddings
-
-#                 store, _ = _get_store_and_embeddings()
-#                 ns_tuple = tuple(ns_input.split(".")) if ns_input else ("logs",)
-#                 results = store.search(
-# namespace_prefix=ns_tuple, query="", limit=limit)
-#                 if results:
-#                     rows = []
-#                     for item in results:
-#                         v = item.value
-#                         rows.append(
-#                             {
-#                                 "session_id": v.get("session_id", "")[:16] + "…",
-#                                 "type": v.get("mcp_interaction_type", ""),
-#                                 "component": v.get("component", ""),
-#                                 "content_snippet": v.get("content", "")[:80] + "…",
-#                                 "timestamp": v.get("timestamp", 0.0),
-#                             }
-#                         )
-#                     import pandas as pd
-
-#                     df = pd.DataFrame(rows)
-#                     st.dataframe(df, use_container_width=True)
-#                     st.caption(f"{len(rows)} entries loaded.")
-#                 else:
-#                     st.info("No entries found in this namespace.")
-#             except Exception as exc:
-#                 st.error(f"Could not load logs: {exc}")
 
 
 # Graph explorer tab
@@ -724,67 +517,6 @@ def _render_graph_explorer():
                     )
             except Exception as exc:
                 st.error(f"Cypher error: {exc}")
-
-
-# def _render_graph_explorer():
-#     st.header("🗺️ Neo4j Graph Explorer")
-
-#     if st.button("Refresh Graph Summary"):
-#         with st.spinner("Querying Neo4j…"):
-#             try:
-#                 from analysis_dashboard.neo4j_tools import _run_cypher
-
-#                 counts = _run_cypher(
-#                     "MATCH (n) RETURN labels(n)[0] AS label, count(n) AS count "
-#                     "ORDER BY count DESC"
-#                 )
-#                 edges = _run_cypher(
-#                     "MATCH ()-[r]->() RETURN type(r) AS relationship, "
-#                     "count(r) AS count ORDER BY count DESC"
-#                 )
-
-#                 col1, col2 = st.columns(2)
-#                 with col1:
-#                     st.subheader("Node Counts")
-#                     if counts:
-#                         import pandas as pd
-
-#                         st.dataframe(pd.DataFrame(counts), use_container_width=True)
-#                     else:
-#                         st.info("No nodes found.")
-#                 with col2:
-#                     st.subheader("Edge Counts")
-#                     if edges:
-#                         import pandas as pd
-
-#                         st.dataframe(pd.DataFrame(edges), use_container_width=True)
-#                     else:
-#                         st.info("No edges found.")
-
-#             except Exception as exc:
-#                 st.error(f"Neo4j query error: {exc}")
-
-#     st.divider()
-#     st.subheader("Custom Cypher Query")
-#     cypher = st.text_area(
-#         "Cypher",
-#         value="MATCH (s:Session) RETURN s.session_id, s.query_count LIMIT 10",
-#         height=80,
-#     )
-#     if st.button("Run Cypher"):
-#         with st.spinner("Running…"):
-#             try:
-#                 from analysis_dashboard.neo4j_tools import _run_cypher
-
-#                 rows = _run_cypher(cypher)
-#                 if rows:
-#                     import pandas as pd
-
-#                     st.dataframe(pd.DataFrame(rows), use_container_width=True)
-#                 else:
-#                     st.info("Query returned no results.")
-#             except Exception as exc:
-#                 st.error(f"Cypher error: {exc}")
 
 
 # Entry point

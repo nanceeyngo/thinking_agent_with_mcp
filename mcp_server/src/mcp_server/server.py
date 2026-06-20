@@ -12,7 +12,7 @@ Transport: streamable-http  (http://localhost:8080/mcp)
 IMPORTANT: This server has NO LLM client, NO LangChain, and NO LangGraph
 dependency. Every step that requires language-model reasoning (query
 expansion is rule-based and LLM-free; ToT evaluation and the critic/
-corrector loop) delegates to the connected MCP *client* via
+corrector loop) delegates to the connected MCP client via
 `ctx.sample(...)` (MCP Sampling). The server only ever orchestrates;
 it never calls an LLM API directly and never imports an LLM SDK.
 """
@@ -145,16 +145,8 @@ class CriticReport(BaseModel):
     evidence: list[str] = Field(default_factory=list)
 
 
-# 5. Hierarchical index — TRUE TREE, not a flattened list
-#
-#    Fix for feedback #4/#5: the previous implementation flattened the
-#    whole knowledge base into one list and re-scanned it at every level
-#    (domain, section, sentence), which is O(n) per level and made the
-#    "top_k per domain"/"top_k per section" slicing maths wrong, because
-#    slicing a globally-sorted list by `top_k * num_parents` does not
-#    guarantee top_k per parent (a single dominant parent can crowd out
-#    the others).
-#
+# 5. Hierarchical index
+
 #    The structure below is a real 3-level tree. Each level carries an
 #    inverted index (word -> set of child keys) built once at startup,
 #    so a lookup for "which children contain word W" is an O(1) dict
@@ -283,26 +275,18 @@ async def _expand_query(raw_query: str, ctx: Context) -> list[str]:
     Multi-query expansion: generate query variants that stay grounded in
     the original query's own terms.
 
-    Fix for feedback #3: the previous version appended fixed, generic
-    sentences (e.g. "AI transparency and safety model comparison") any
-    time a trigger keyword was present, regardless of whether that
-    sentence had anything to do with the rest of the user's query. That
-    produces variants that can retrieve content unrelated to what was
-    actually asked.
-
-    The approach here instead expands the query by substituting/adding
-    *synonyms and closely related terms for words that are actually in
-    the query*, so every variant is still anchored to the original
+    The approach here expands the query by substituting/adding
+    synonyms and closely related terms for words that are actually in
+    the query, so every variant is still anchored to the original
     subject matter. No LLM call is made (the server holds no LLM); this
-    is deliberately a deterministic, auditable rule-based expansion —
+    is deliberately a deterministic, auditable rule-based expansion -
     only the call site (ctx forwarding) changed from the prior version,
     not the "no LLM" design constraint.
 
     Args:
         raw_query: The original user query.
         ctx: FastMCP context, used to forward expansion progress to the
-            client (fix for feedback #7 — this function previously
-            logged nothing at all).
+            client.
 
     Returns:
         Ordered, de-duplicated list of query variants, always starting
@@ -389,18 +373,18 @@ async def _hierarchical_retrieve(
     True hierarchical retrieval over the tree structure (3-level indexing):
 
     Level 1: O(1) inverted-index lookup per query word to score domains.
-    Level 2: For each *selected* domain only, O(1) inverted-index lookup
+    Level 2: For each selected domain only, O(1) inverted-index lookup
              within that domain's own section index — never touches
              other domains' sections.
-    Level 3: For each *selected* section only, O(1) inverted-index
+    Level 3: For each selected section only, O(1) inverted-index
              lookup within that section's own sentence index — never
              touches other sections' sentences.
 
     Fix for feedback #4/#5: because each level's inverted index is
     scoped to its parent (e.g. a domain's section_inverted_index only
     contains that domain's sections), top_k selection at level 2 is
-    done independently *per domain*, and top_k selection at level 3 is
-    done independently *per section* — so "top_k per domain/section" is
+    done independently per domain, and top_k selection at level 3 is
+    done independently per section — so "top_k per domain/section" is
     a real per-parent guarantee, not an approximation from slicing a
     globally sorted list.
 
@@ -518,12 +502,7 @@ async def _tot_evaluate_with_llm(
                      the query, or is it redundant with chunks already
                      scored highly?
 
-    Fix for feedback #6: the previous prompt mixed the words
-    "perspectives" and "personas" inconsistently, never told the LLM
-    what each score dimension actually meant, gave no criterion for
-    `fallback_needed`, and asked for a "reasoning" field without saying
-    what it should explain. All four problems are fixed below: one
-    consistent term ("perspective") is used throughout, each
+    One consistent term ("perspective") is used throughout, each
     perspective is defined inline, `fallback_needed` has an explicit
     trigger rule, and the reasoning field's scope is explicitly
     constrained to covering both the per-chunk scores and the
@@ -694,11 +673,8 @@ async def _tavily_fallback(query: str, ctx: Context) -> list[str]:
     """
     Run a Tavily web search as fallback when internal docs are insufficient.
 
-    Uses the `tavily-python` SDK directly (no LangChain). The previous
-    version imported `langchain_tavily.TavilySearch`, which pulls in
-    `langchain-core` as a transitive dependency — exactly the kind of
-    LLM-framework footprint the server is not supposed to carry (see
-    fix for feedback #1). `tavily-python` is a thin REST client with no
+    Uses the `tavily-python` SDK directly (no LangChain).
+    `tavily-python` is a thin REST client with no
     LLM/agent code in it.
     """
     tavily_api_key = os.getenv("TAVILY_API_KEY", "")
@@ -736,10 +712,7 @@ async def _run_critic(
     """
     Run the Critic LLM via MCP Sampling to evaluate the draft answer.
 
-    Fix for feedback #8: the previous prompt jumped straight from
-    context (QUESTION/SEARCH RESULTS/DRAFT ANSWER) to the output JSON
-    schema and rules, without ever telling the LLM what to *do* with
-    that context. An explicit task instruction is added below, before
+    An explicit task instruction is added below, before
     the schema.
 
     Args:

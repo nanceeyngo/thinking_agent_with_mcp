@@ -7,9 +7,9 @@ Key responsibilities:
   • Instantiate langgraph.store.sqlite.SqliteStore backed by a real
     OpenAI text-embedding-3-small embedding model so every log entry
     is stored with a semantic vector and is searchable.
-  • Expose write_log() — persists a validated LogEntry into a
+  • Expose write_log() - persists a validated LogEntry into a
     hierarchical dot-separated namespace tuple.
-  • Expose search_logs() — performs cosine-similarity vector search
+  • Expose search_logs() - performs cosine-similarity vector search
     over all stored entries and returns the top-k matches.
 
 Namespace hierarchy examples

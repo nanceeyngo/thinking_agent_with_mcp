@@ -1,6 +1,6 @@
 """
 agent_client/logging_config.py
-═══════════════════════════════
+
 Dual-stream logging setup.
 
 Writes TWO streams to agent_system.log with clear prefixes:
