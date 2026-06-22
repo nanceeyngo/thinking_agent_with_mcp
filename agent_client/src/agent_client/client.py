@@ -753,22 +753,22 @@ async def _async_main() -> None:
 
     # Test queries
     queries = [
-        (
-            "What are the current debates around open-source vs "
-            "closed-source AI? Evaluate the trade-offs and recommend which "
-            "approach is better for long-term AI safety.",
-            "Test 1 — Trade-off Query",
-        ),
+        # (
+        #     "What are the current debates around open-source vs "
+        #     "closed-source AI? Evaluate the trade-offs and recommend which "
+        #     "approach is better for long-term AI safety.",
+        #     "Test 1 — Trade-off Query",
+        # ),
         (
             "What are the latest developments in quantum computing? "
             "Focus on recent breakthroughs and their practical implications.",
             "Test 2 — Factual Query",
         ),
-        (
-            "Should governments regulate large language models? "
-            "Analyse the trade-offs between innovation and public safety.",
-            "Test 3 — Policy Query",
-        ),
+        # (
+        #     "Should governments regulate large language models? "
+        #     "Analyse the trade-offs between innovation and public safety.",
+        #     "Test 3 — Policy Query",
+        # ),
     ]
 
     for query, label in queries:
